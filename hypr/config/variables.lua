@@ -1,0 +1,6 @@
+mainMod     = "SUPER"
+terminal    = "kitty"
+fileManager = "dolphin"
+browser     = "flatpak run app.zen_browser.zen"
+shell       = os.getenv("HOME") .. "/claude/rrk-shell/bin/rrkshell"
+qs_ipc      = "qs -c rrk-shell ipc call"

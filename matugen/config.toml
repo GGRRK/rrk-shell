@@ -1,0 +1,19 @@
+# matugen: generate a Material-You palette from the wallpaper and render templates.
+# Run via `rrkshell wallpaper <image>` — never by hand.
+[config]
+
+[templates.shell]
+input_path  = "~/claude/rrk-shell/matugen/templates/colors.json"
+output_path = "~/.config/rrk-shell/colors.json"
+
+[templates.hypr]
+input_path  = "~/claude/rrk-shell/matugen/templates/colors.lua"
+output_path = "~/.config/hypr/config/colors.lua"
+
+[templates.kitty]
+input_path  = "~/claude/rrk-shell/matugen/templates/kitty-colors.conf"
+output_path = "~/.config/kitty/colors.conf"
+
+[templates.hyprlock]
+input_path  = "~/claude/rrk-shell/matugen/templates/hyprlock.conf"
+output_path = "~/.config/hypr/hyprlock.conf"

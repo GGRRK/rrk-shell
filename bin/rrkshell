@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# rrkshell — control script for the rrk-shell desktop.
+#   rrkshell start            start wallpaper daemon + shell (idempotent)
+#   rrkshell stop             stop the shell
+#   rrkshell restart          restart the shell (use after editing QML)
+#   rrkshell toggle <panel>   dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power
+#   rrkshell wallpaper <img>  set wallpaper, regenerate colours everywhere
+#   rrkshell wallpaper random
+#   rrkshell log              tail the shell log
+set -u
+
+REPO="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
+CONF="$HOME/.config/rrk-shell"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/rrk-shell"
+LOG="$STATE/shell.log"
+QS_CONFIG="rrk-shell"          # ~/.config/quickshell/rrk-shell -> $REPO/shell
+mkdir -p "$CONF" "$STATE"
+
+settings() { # settings <jq-expr> <default>
+    local v
+    v=$(jq -r "$1 // empty" "$CONF/settings.json" 2>/dev/null)
+    echo "${v:-$2}"
+}
+
+wallpaper_dir() { settings '.wallpaperDir' "$HOME/Pictures/Wallpapers" | sed "s|^~|$HOME|"; }
+
+start_wallpaper_daemon() {
+    if ! pgrep -x awww-daemon >/dev/null; then
+        awww-daemon --format xrgb >/dev/null 2>&1 &
+        for _ in $(seq 1 30); do awww query >/dev/null 2>&1 && break; sleep 0.1; done
+    fi
+}
+
+apply_wallpaper() { # apply_wallpaper <image> [--no-transition]
+    local img="$1" trans="${2:-}"
+    [ -f "$img" ] || { echo "no such image: $img" >&2; return 1; }
+    start_wallpaper_daemon
+    if [ "$trans" = "--no-transition" ]; then
+        awww img "$img" --transition-type none
+    else
+        awww img "$img" --transition-type grow --transition-pos center --transition-fps 60 --transition-duration 1.2
+    fi
+    printf '%s' "$img" > "$STATE/wallpaper"
+    matugen image "$img" -c "$REPO/matugen/config.toml" -m dark >/dev/null 2>&1
+    # kitty picks up colours live; Hyprland re-reads colors.lua on reload
+    hyprctl reload >/dev/null 2>&1 || true
+    pkill -USR1 -x kitty 2>/dev/null || true
+}
+
+random_wallpaper() {
+    local dir; dir="$(wallpaper_dir)"
+    find "$dir" -maxdepth 2 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | shuf -n1
+}
+
+cmd_start() {
+    start_wallpaper_daemon
+    local wp; wp="$(cat "$STATE/wallpaper" 2>/dev/null || true)"
+    [ -f "$wp" ] || wp="$(random_wallpaper)"
+    [ -n "$wp" ] && apply_wallpaper "$wp" --no-transition
+    if ! pgrep -f "qs -c $QS_CONFIG" >/dev/null; then
+        # setsid so the shell survives the caller (hyprland exec, terminal) exiting
+        setsid -f qs -c "$QS_CONFIG" >>"$LOG" 2>&1
+    fi
+}
+
+cmd_stop()    { pkill -f "qs -c $QS_CONFIG" 2>/dev/null || true; }
+cmd_restart() { cmd_stop; sleep 0.3; : > "$LOG"; cmd_start; }
+cmd_toggle()  { qs -c "$QS_CONFIG" ipc call panels toggle "$1"; }
+
+case "${1:-}" in
+    start)     cmd_start ;;
+    stop)      cmd_stop ;;
+    restart)   cmd_restart ;;
+    toggle)    [ -n "${2:-}" ] || { echo "usage: rrkshell toggle <panel>" >&2; exit 1; }; cmd_toggle "$2" ;;
+    wallpaper) case "${2:-}" in
+                   random) apply_wallpaper "$(random_wallpaper)" ;;
+                   "")     echo "usage: rrkshell wallpaper <image>|random" >&2; exit 1 ;;
+                   *)      apply_wallpaper "$2" ;;
+               esac ;;
+    log)       tail -n 50 -f "$LOG" ;;
+    *)         sed -n '2,10p' "$0"; exit 1 ;;
+esac
