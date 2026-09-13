@@ -9,11 +9,12 @@ Item {
     property color color: Theme.primary
     property color track: Theme.alpha(Theme.outlineVariant, 0.5)
     property int size: 64
+    property bool animated: true     // false = jump straight to the new value (desktop widgets: no per-frame redraws)
     default property alias content: inner.data
     implicitWidth: size; implicitHeight: size
 
     property real _anim: value
-    Behavior on _anim { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+    Behavior on _anim { enabled: root.animated; NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
     on_AnimChanged: canvas.requestPaint()
     onColorChanged: canvas.requestPaint()
     onTrackChanged: canvas.requestPaint()

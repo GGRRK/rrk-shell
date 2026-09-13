@@ -7,6 +7,7 @@
 #   rrkshell wallpaper <img>  set wallpaper, regenerate colours everywhere
 #   rrkshell wallpaper random
 #   rrkshell log              tail the shell log
+#   rrkshell widgets          hide / show the desktop widgets (clock, visualizer, system monitor, weather)
 set -u
 
 REPO="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
@@ -72,11 +73,12 @@ case "${1:-}" in
     stop)      cmd_stop ;;
     restart)   cmd_restart ;;
     toggle)    [ -n "${2:-}" ] || { echo "usage: rrkshell toggle <panel>" >&2; exit 1; }; cmd_toggle "$2" ;;
+    widgets)   qs -c "$QS_CONFIG" ipc call widgets toggle ;;
     wallpaper) case "${2:-}" in
                    random) apply_wallpaper "$(random_wallpaper)" ;;
                    "")     echo "usage: rrkshell wallpaper <image>|random" >&2; exit 1 ;;
                    *)      apply_wallpaper "$2" ;;
                esac ;;
     log)       tail -n 50 -f "$LOG" ;;
-    *)         sed -n '2,10p' "$0"; exit 1 ;;
+    *)         sed -n '2,/^set -u/p' "$0" | sed '$d'; exit 1 ;;
 esac

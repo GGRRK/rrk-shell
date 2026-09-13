@@ -22,6 +22,9 @@ hl.bind(mainMod .. " + V",     hl.dsp.exec_cmd("cliphist list | wofi --dmenu | c
 hl.bind("SHIFT + PRINT", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy && notify-send -a Screenshot 'Region copied to clipboard'"))
 hl.bind("PRINT",         hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grim ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && notify-send -a Screenshot 'Saved to ~/Pictures/Screenshots'"))
 
+-- desktop widgets (clock, visualizer, system monitor, weather on the wallpaper)
+hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(qs_ipc .. " widgets toggle"))   -- hide / show them
+
 -- windows
 hl.bind(mainMod .. " + T", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
