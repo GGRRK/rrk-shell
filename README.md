@@ -19,7 +19,7 @@ Everything the desktop does lives in this one repo and is plain, readable text:
 ## Install
 
 ```
-git clone https://github.com/<you>/rrk-shell ~/claude/rrk-shell
+git clone https://github.com/GGRRK/rrk-shell ~/claude/rrk-shell
 bash ~/claude/rrk-shell/install.sh
 ```
 
