@@ -8,6 +8,7 @@
 #   rrkshell wallpaper random
 #   rrkshell log              tail the shell log
 #   rrkshell widgets          hide / show the desktop widgets (clock, visualizer, system monitor, weather)
+#   rrkshell avatar [photo]   rebuild the lock-screen avatar (with a photo: it is copied to ~/.face first)
 set -u
 
 REPO="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
@@ -46,6 +47,7 @@ apply_wallpaper() { # apply_wallpaper <image> [--no-transition]
     # kitty picks up colours live; Hyprland re-reads colors.lua on reload
     hyprctl reload >/dev/null 2>&1 || true
     pkill -USR1 -x kitty 2>/dev/null || true
+    "$REPO/shell/scripts/lock-avatar.sh" 2>/dev/null || true   # lock-screen avatar follows the palette
 }
 
 random_wallpaper() {
@@ -80,5 +82,7 @@ case "${1:-}" in
                    *)      apply_wallpaper "$2" ;;
                esac ;;
     log)       tail -n 50 -f "$LOG" ;;
-    *)         sed -n '2,/^set -u/p' "$0" | sed '$d'; exit 1 ;;
+    avatar)    if [ -n "${2:-}" ]; then magick identify -quiet -- "$2" >/dev/null 2>&1 || { echo "not an image: $2" >&2; exit 1; }; cp -- "$2" "$HOME/.face" || exit 1; fi
+               "$REPO/shell/scripts/lock-avatar.sh" ;;
+    *)         grep '^#   rrkshell' "$0" >&2; exit 1 ;;
 esac

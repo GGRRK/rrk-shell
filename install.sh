@@ -77,6 +77,7 @@ if [ -n "$first" ]; then
     printf '%s' "$first" > "$STATEWP"
     matugen image "$first" -c "$REPO/matugen/config.toml" -m dark --prefer saturation >/dev/null && echo "  palette generated from $(basename "$first")"
 fi
+"$REPO/shell/scripts/lock-avatar.sh" && echo "  lock-screen avatar -> $CFG/rrk-shell/avatar.png (put a photo at ~/.face and run 'rrkshell avatar' to use your own)" || true
 
 say "Done"
 cat <<TXT

@@ -120,6 +120,7 @@ rrkshell wallpaper <image>  set a wallpaper and regenerate the colour scheme eve
 rrkshell wallpaper random   pick a random one from your wallpaper folder
 rrkshell log                follow the shell log (~/.local/state/rrk-shell/shell.log)
 rrkshell widgets            hide / show the desktop widgets
+rrkshell avatar [photo]     rebuild the lock-screen avatar (with a photo: it is copied to ~/.face first)
 ```
 
 The panels can also be driven directly over Quickshell IPC (this is what the keybinds do):
@@ -166,6 +167,13 @@ Dark mode for everything else: `install.sh` sets `color-scheme = prefer-dark` in
 Flatpaks like Zen — by `xdg-desktop-portal-gtk`), links `gtk/` and `qt6ct/` into `~/.config`, and gives Flatpak apps
 read access to the GTK config. Running apps pick the change up live (GTK/Firefox) or on next launch (Qt/KDE).
 Fonts: JetBrainsMono Nerd Font for text, Material Symbols Rounded for icons.
+
+Lock screen (`SUPER+L`, or after 10 min idle): blurred wallpaper, clock, your avatar (`~/.face` if it exists — any size, it is
+centre-cropped — otherwise a monogram in the palette colours), the password pill, and keyboard-layout / battery / weather
+pills; the moon button bottom-right suspends. Template `matugen/templates/hyprlock.conf`, helpers `shell/scripts/lock-status.sh`
+and `lock-avatar.sh`; re-rendered on every wallpaper change. Deliberate differences from the reference: the clock stays visible
+above the avatar row (hyprlock cannot swap views), the prompt says ENTER PASSWORD, and the button suspends instead of powering
+off (change `bedtime` + `systemctl suspend` to `power_settings_new` + `systemctl poweroff` in the template if you want that).
 
 ## Hyprland config layout
 
