@@ -28,7 +28,7 @@ PanelWindow {
     ClipboardPanel { anchors.horizontalCenter: parent.horizontalCenter; y: win.top + 40 }
     WallpaperPicker{ anchors.horizontalCenter: parent.horizontalCenter; y: win.top }
     MediaPanel     { x: 8; y: win.top }
-    BluetoothPanel { anchors.horizontalCenter: parent.horizontalCenter; y: win.top }
+    BluetoothPanel { x: parent.width - width - 8; y: win.top }
     NetworkPanel   { x: parent.width - width - 8; y: win.top }
     PowerMenu      { anchors.centerIn: parent }
 }

@@ -4,3 +4,4 @@ hl.window_rule({ name = "float-pavucontrol", match = { class = "org.pulseaudio.p
 hl.window_rule({ name = "float-easyeffects", match = { class = "com.github.wwmm.easyeffects" }, float = true, size = { "(monitor_w*0.55)", "(monitor_h*0.7)" }, center = true })
 hl.window_rule({ name = "float-file-dialogs", match = { title = "^(Open|Save|Select).*" }, float = true, center = true })
 hl.window_rule({ name = "float-browser-quit-prompt", match = { class = "^app\\.zen_browser\\.zen$", title = "^Close Zen$" }, float = true, center = true })
+hl.window_rule({ name = "float-bluetoothctl", match = { class = "rrk-btctl" }, float = true, size = { "(monitor_w*0.4)", "(monitor_h*0.5)" }, center = true })
