@@ -39,7 +39,7 @@ so editing a file here changes the live desktop (Quickshell hot-reloads QML on s
 | `SUPER + N` | Notification center (do-not-disturb, clear all, quick actions) |
 | `SUPER + W` | Wallpaper picker (carousel, colour filter, shuffle, auto-rotate) |
 | `SUPER + Shift + W` | Random wallpaper right now (colours re-theme everywhere) |
-| `SUPER + B` | Bluetooth panel |
+| `SUPER + B` | Bluetooth panel — radial view: the connected device in the centre with Scan / Battery / Audio profile / Disconnect / MAC chips around it; the Scan chip shows nearby devices to pair or connect; top-right button switches to a plain list |
 | `SUPER + X` | Power menu (lock, log out, suspend, reboot, shut down) |
 | `SUPER + V` | Clipboard history |
 | `SUPER + L` | Lock screen (hyprlock) |
@@ -100,7 +100,7 @@ Left to right:
 | system tray | app-specific | middle-click = secondary action, right-click = menu |
 | keyboard layout (`EN`) | switch layout | |
 | Wi-Fi | network panel (scan, connect, toggle) | |
-| Bluetooth | Bluetooth panel | |
+| Bluetooth | Bluetooth panel (radial device view) | |
 | volume | media panel (volume + mic sliders, output device, seek) | right-click mute · scroll changes volume |
 | notifications bell | notification center | badge shows unread count |
 | battery | | percentage, charging icon |
