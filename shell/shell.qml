@@ -4,6 +4,7 @@ import QtQuick
 import qs.services
 import qs.bar
 import qs.panels
+import qs.desktop
 
 ShellRoot {
     Variants {
@@ -14,6 +15,7 @@ ShellRoot {
             Overlay     { screen: modelData }
             NotifPopups { screen: modelData }
             OsdWindow   { screen: modelData }
+            DesktopWidgets { screen: modelData }
         }
     }
 
@@ -30,6 +32,8 @@ ShellRoot {
         function brightness(dir: string): void { Brightness.step(dir === "up" ? 0.05 : -0.05); Osd.show("brightness") }
         function mic(): void { Audio.toggleMicMute(); Osd.show("mic") }
     }
+    // `qs -c rrk-shell ipc call widgets toggle` — hide / show the desktop widgets (SUPER+SHIFT+D, `rrkshell widgets`)
+    IpcHandler { target: "widgets"; function toggle(): void { Widgets.toggle() } function show(on: bool): void { Widgets.show(on) } }
     // force singletons that do background work to instantiate at startup
     Component.onCompleted: { Weather.ready; Network.connected; Notifs.count; Keyboard.layout; Power.profile; Wallpapers.list }
 }

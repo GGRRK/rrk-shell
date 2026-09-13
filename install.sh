@@ -15,7 +15,7 @@ sudo pacman -S --needed --noconfirm \
     hyprlock hypridle brightnessctl wl-clipboard cliphist jq \
     bluez bluez-utils networkmanager power-profiles-daemon upower \
     pipewire wireplumber pipewire-pulse playerctl pavucontrol \
-    grim slurp libnotify imagemagick xdg-user-dirs qt6-imageformats qt6-5compat qt6ct wofi
+    grim slurp libnotify imagemagick xdg-user-dirs qt6-imageformats qt6-5compat qt6ct wofi cava
 
 say "Enabling services (bluetooth, power profiles)"
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service >/dev/null 2>&1 || true

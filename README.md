@@ -45,6 +45,7 @@ so editing a file here changes the live desktop (Quickshell hot-reloads QML on s
 | `SUPER + L` | Lock screen (hyprlock) |
 | `SUPER + M` | Log out (`uwsm stop`) |
 | `Esc` / click outside | Close any open panel |
+| `SUPER + Shift + D` | Hide / show the desktop widgets (clock, visualizer, system monitor, weather) |
 
 ### Apps
 | Key | Action |
@@ -118,6 +119,7 @@ rrkshell toggle <panel>     dashboard | notifications | launcher | wallpapers | 
 rrkshell wallpaper <image>  set a wallpaper and regenerate the colour scheme everywhere
 rrkshell wallpaper random   pick a random one from your wallpaper folder
 rrkshell log                follow the shell log (~/.local/state/rrk-shell/shell.log)
+rrkshell widgets            hide / show the desktop widgets
 ```
 
 The panels can also be driven directly over Quickshell IPC (this is what the keybinds do):
@@ -135,12 +137,14 @@ qs -c rrk-shell ipc call osd brightness up|down
 ```json
 {
   "wallpaperDir": "~/Pictures/Wallpapers",
-  "weather": { "lat": 52.52, "lon": 13.40, "city": "Berlin" }
+  "weather": { "lat": 52.52, "lon": 13.40, "city": "Berlin" },
+  "widgets": { "clock": true, "cava": true, "sysmon": true, "weather": true }
 }
 ```
 
 - `wallpaperDir` — where the wallpaper picker looks (subfolders one level deep are included).
 - `weather` — leave `{}` to locate automatically by IP, or set a fixed place.
+- `widgets` — switch single desktop widgets off (all on by default; the key may be left out entirely). `SUPER + Shift + D` hides / shows them all.
 
 ## Theming
 
@@ -196,3 +200,12 @@ bash ~/claude/backups/2026-09-13-before-rrk-shell/RESTORE.sh
 - `misc.vfr` and `dwindle.pseudotile` no longer exist.
 - `seatd.service` must stay **disabled** on this machine (it fights `logind` and leaves a black screen on logout).
 - Logging out is `uwsm stop`, not the raw `exit` dispatcher.
+
+## Desktop widgets
+
+A column of glass cards on the right of the wallpaper (beneath windows, click-through, never focused): analog + digital clock,
+a [cava](https://github.com/karlstav/cava) audio visualizer (cava only runs while something is playing and the desktop is
+actually visible), a system monitor (CPU, RAM, CPU temperature, disk, network) and the current weather. `SUPER + Shift + D`
+or `rrkshell widgets` hides / shows them (remembered across restarts in `~/.local/state/rrk-shell/widgets-hidden`); single
+widgets are switched off in `settings.json` (`"widgets": {"cava": false}`, picked up live). Code: `shell/desktop/`, services
+`Widgets`, `SysMon`, `Cava`, helper scripts `shell/scripts/sysmon.sh` and `shell/scripts/cava.conf`.

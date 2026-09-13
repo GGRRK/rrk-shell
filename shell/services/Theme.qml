@@ -12,7 +12,6 @@ Singleton {
     function pick(key, fallback) { return (c && c[key]) ? c[key] : fallback }
 
     readonly property color primary:          pick("primary", "#a8c7ff")
-    readonly property color onPrimary:        pick("onPrimary", "#0b2a55")
     readonly property color primaryContainer: pick("primaryContainer", "#2d4a75")
     readonly property color secondary:        pick("secondary", "#bcc7dc")
     readonly property color tertiary:         pick("tertiary", "#d8bde6")
@@ -22,11 +21,18 @@ Singleton {
     readonly property color surfaceContainer: pick("surfaceContainer", "#1b1f28")
     readonly property color surfaceHigh:      pick("surfaceHigh", "#242932")
     readonly property color surfaceHighest:   pick("surfaceHighest", "#2e333d")
-    readonly property color onSurface:        pick("onSurface", "#e1e2ea")
     readonly property color onSurfaceVariant: pick("onSurfaceVariant", "#aab2c2")
     readonly property color outline:          pick("outline", "#727a8a")
     readonly property color outlineVariant:   pick("outlineVariant", "#3a404b")
     readonly property string wallpaper:       pick("wallpaper", "")
+    // onPrimary / onSurface: a property called on<X> declared next to a property called <x> is mis-read by
+    // the QML compiler as a signal handler for <x> and its value is silently dropped (both came out black:
+    // Qt 6.11 qqmltypecompiler SignalHandlerResolver treats every own property name as a custom signal).
+    // Declaring the values under another name and exposing them through aliases sidesteps that.
+    readonly property color _onPrimary:       pick("onPrimary", "#0b2a55")
+    readonly property color _onSurface:       pick("onSurface", "#e1e2ea")
+    property alias onPrimary: root._onPrimary
+    property alias onSurface: root._onSurface
 
     // Panels are drawn near-black and slightly translucent so Hyprland's blur shows through.
     readonly property color panelBg:   alpha(surfaceLow, 0.93)
