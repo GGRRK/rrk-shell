@@ -14,9 +14,9 @@ sudo pacman -S --needed --noconfirm \
     ttf-jetbrains-mono-nerd ttf-material-symbols-variable \
     hyprlock hypridle brightnessctl wl-clipboard cliphist jq \
     bluez bluez-utils networkmanager power-profiles-daemon upower \
+    easyeffects lsp-plugins-lv2 \
     pipewire wireplumber pipewire-pulse playerctl pavucontrol \
-    grim slurp libnotify imagemagick xdg-user-dirs qt6-imageformats qt6-5compat qt6ct wofi \
-    easyeffects lsp-plugins-lv2
+    grim slurp libnotify imagemagick xdg-user-dirs qt6-imageformats qt6-5compat qt6ct wofi
 
 say "Enabling services (bluetooth, power profiles)"
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service >/dev/null 2>&1 || true

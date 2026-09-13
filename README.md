@@ -141,7 +141,8 @@ qs -c rrk-shell ipc call osd brightness up|down
 
 - `wallpaperDir` — where the wallpaper picker looks (subfolders one level deep are included).
 - `weather` — leave `{}` to locate automatically by IP, or set a fixed place.
-- `~/.config/rrk-shell/eq.json` — media-panel equalizer state (10 band gains in dB, preset, the Saved slot, on/off, expanded). The EQ runs on easyeffects (started at login as `easyeffects --hide-window --service-mode`; needs `lsp-plugins-lv2` for the actual filter); the shell talks to it over its local socket and loads the generated preset `~/.local/share/easyeffects/output/rrk-eq.json` to put a 10-band equalizer into the output pipeline.
+
+The media panel's equalizer keeps its own state in `~/.config/rrk-shell/eq.json` (10 band gains in dB, preset, the Saved slot, on/off, expanded). The EQ runs on easyeffects (started at login as `easyeffects --hide-window --service-mode`; needs `lsp-plugins-lv2` for the actual filter); the shell talks to it over its local socket and loads the generated preset `~/.local/share/easyeffects/output/rrk-eq.json` to put a 10-band equalizer into the output pipeline.
 
 ## Theming
 

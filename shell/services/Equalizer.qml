@@ -83,8 +83,10 @@ Singleton {
     function setEnabled(on) { enabled = on; send("set_property:output:equalizer:0:bypass:" + (on ? "false" : "true")); saveTimer.restart() }
     function toggleExpanded() { expanded = !expanded; saveTimer.restart() }
     // --service-mode: the window opens but closing it does not quit the backend (a running instance just gets show_window)
-    function openGui() { Quickshell.execDetached(["easyeffects", "--service-mode"]); if (!ready) { pollsLeft = 6; startDelay.restart() } }
-    function startService() { Quickshell.execDetached(["easyeffects", "--hide-window", "--service-mode"]); pollsLeft = 6; startDelay.restart() }
+    function openGui() { Quickshell.execDetached(["easyeffects", "--service-mode"]); if (!ready) kickStart() }
+    function startService() { Quickshell.execDetached(["easyeffects", "--hide-window", "--service-mode"]); kickStart() }
+    // after a start click: easyeffects needs a moment to create its socket, so probe every 2.5 s for 10 s, then fall back to the 10 s poll
+    function kickStart() { pollsLeft = 6; startDelay.left = 4; startDelay.restart() }
     function retry() { pending = []; sock.active = false; setupTries = 0; status = "not-running"; pollsLeft = 6; probe.running = true }
     // called when the media panel opens: re-probe if needed, else adopt whatever easyeffects currently has
     function refresh() {
@@ -137,7 +139,7 @@ Singleton {
     }
     Timer { interval: 10000; repeat: true; running: root.status === "not-running" && root.pollsLeft > 0
             onTriggered: { root.pollsLeft--; probe.running = true } }
-    Timer { id: startDelay; interval: 2500; onTriggered: probe.running = true }
+    Timer { id: startDelay; interval: 2500; repeat: true; property int left: 0; onTriggered: { probe.running = true; if (--left <= 0) stop() } }
     function onProbe(t) {
         if (t === "none") { status = "not-installed"; return }
         if (t === "noplugin") { status = "no-plugin"; return }
@@ -170,6 +172,8 @@ Singleton {
         cb(line.trim())
     }
     Timer { id: replyTimeout; interval: 2000; onTriggered: { console.warn("equalizer: easyeffects did not answer, reconnecting"); root.onDisconnected(false) } }
+    // a unix-socket connect normally succeeds or fails synchronously; this only guards the EAGAIN retry path so "connecting" can never stick
+    Timer { id: connectTimeout; interval: 5000; running: root.status === "connecting"; onTriggered: { console.warn("equalizer: connecting to easyeffects timed out"); root.onDisconnected(true) } }
     function onConnected() { status = "setting-up"; setupTries = 0; verify() }
     // connectFailed = the socket file exists but nobody answers: stop polling until the panel is opened again
     function onDisconnected(connectFailed) {
