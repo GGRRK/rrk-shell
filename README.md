@@ -147,6 +147,8 @@ qs -c rrk-shell ipc call osd brightness up|down
 - `weather` — leave `{}` to locate automatically by IP, or set a fixed place.
 - `widgets` — switch single desktop widgets off (all on by default; the key may be left out entirely). `SUPER + Shift + D` hides / shows them all.
 
+The media panel's equalizer keeps its own state in `~/.config/rrk-shell/eq.json` (10 band gains in dB, preset, the Saved slot, on/off, expanded). The EQ runs on easyeffects (started at login as `easyeffects --hide-window --service-mode`; needs `lsp-plugins-lv2` for the actual filter); the shell talks to it over its local socket and loads the generated preset `~/.local/share/easyeffects/output/rrk-eq.json` to put a 10-band equalizer into the output pipeline.
+
 ## Theming
 
 Pick a wallpaper (`SUPER+W`) and `matugen` derives a Material-You palette from it. The templates in

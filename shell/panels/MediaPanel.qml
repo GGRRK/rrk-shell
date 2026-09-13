@@ -4,12 +4,17 @@ import QtQuick.Effects
 import qs.services
 import qs.components
 
-// Now playing: round album art, title/artist, output device, seek bar, transport; audio output volume below.
+// Now playing: round album art, title/artist, output device, seek bar, transport; audio output volume below;
+// collapsible 10-band equalizer (easyeffects) at the bottom — the panel grows/shrinks with it.
 Popup {
     name: "media"
-    implicitWidth: 640; implicitHeight: 330
+    implicitWidth: 640
+    implicitHeight: 44 + col.implicitHeight + (Equalizer.expanded ? 16 + eq.implicitHeight : 0)
+    Behavior on implicitHeight { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+    onShownChanged: if (shown) Equalizer.refresh()
     ColumnLayout {
-        anchors { fill: parent; margins: 22 }
+        id: col
+        anchors { top: parent.top; left: parent.left; right: parent.right; margins: 22 }
         spacing: 16
         RowLayout {
             spacing: 24; Layout.fillWidth: true
@@ -27,7 +32,9 @@ Popup {
             }
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 6
-                Label { text: Media.active ? Media.title : "Nothing playing"; font.pixelSize: 18; font.bold: true; Layout.fillWidth: true }
+                RowLayout { Layout.fillWidth: true; spacing: 8
+                    Label { text: Media.active ? Media.title : "Nothing playing"; font.pixelSize: 18; font.bold: true; Layout.fillWidth: true }
+                    IconButton { icon: "equalizer"; size: 30; iconSize: 18; active: Equalizer.expanded; onClicked: Equalizer.toggleExpanded() } }
                 Label { text: Media.artist ? "BY " + Media.artist.toUpperCase() : ""; font.pixelSize: 12; color: Theme.onSurfaceVariant; Layout.fillWidth: true }
                 Row { spacing: 8
                     Pill { padding: 8; implicitHeight: 24
@@ -51,5 +58,12 @@ Popup {
             HSlider { Layout.fillWidth: true; icon: Audio.icon; value: Audio.volume; onMoved: v => Audio.setVolume(v) }
             HSlider { Layout.fillWidth: true; icon: Audio.micMuted ? "mic_off" : "mic"; value: Audio.micVolume; color: Theme.tertiary; onMoved: v => { if (Audio.source && Audio.source.audio) Audio.source.audio.volume = v } }
             IconButton { icon: "settings"; size: 32; iconSize: 18; onClicked: { Panels.close(); Runner.run("pavucontrol") } } }
+    }
+    EqualizerSection {
+        id: eq
+        anchors { top: col.bottom; topMargin: 16; left: parent.left; right: parent.right; leftMargin: 22; rightMargin: 22 }
+        opacity: Equalizer.expanded ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 160 } }
+        visible: opacity > 0
     }
 }
