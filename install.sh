@@ -8,7 +8,7 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 
 say() { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
 
-say "Installing packages (official repos)"
+say "Installing packages (official repos) — sudo will ask for your password"
 sudo pacman -S --needed --noconfirm \
     hyprland quickshell matugen awww kitty \
     ttf-jetbrains-mono-nerd ttf-material-symbols-variable \
@@ -59,8 +59,10 @@ fi
 
 say "First colour scheme"
 first="$(find "$WALLS" -maxdepth 2 -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.webp' \) | head -n1 || true)"
+STATEWP="$HOME/.local/state/rrk-shell/wallpaper"
+if [ -f "$STATEWP" ] && [ -f "$(cat "$STATEWP")" ]; then first="$(cat "$STATEWP")"; fi   # keep the user's current pick
 if [ -n "$first" ]; then
-    printf '%s' "$first" > "$HOME/.local/state/rrk-shell/wallpaper"
+    printf '%s' "$first" > "$STATEWP"
     matugen image "$first" -c "$REPO/matugen/config.toml" -m dark --prefer saturation >/dev/null && echo "  palette generated from $(basename "$first")"
 fi
 
