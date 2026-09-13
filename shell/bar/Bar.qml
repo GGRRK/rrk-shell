@@ -21,17 +21,19 @@ PanelWindow {
         Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.alpha(Theme.outlineVariant, 0.35) }
     }
 
+    // ── left ────────────────────────────────────────────────────────────────
     RowLayout {
-        anchors { fill: parent; leftMargin: 10; rightMargin: 10 }
+        anchors { left: parent.left; top: parent.top; bottom: parent.bottom; leftMargin: 10 }
         spacing: 8
-
-        // ── left ────────────────────────────────────────────────────────────
         IconButton { icon: "search"; size: 30; iconSize: 19; active: Panels.open === "launcher"; onClicked: Panels.toggle("launcher") }
         Workspaces {}
         MediaModule {}
-        Item { Layout.fillWidth: true }
+    }
 
-        // ── center ──────────────────────────────────────────────────────────
+    // ── center — anchored to the true screen centre, independent of the side groups
+    RowLayout {
+        anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+        spacing: 8
         ClockModule {}
         Pill {
             visible: Weather.ready
@@ -40,9 +42,12 @@ PanelWindow {
             Icon { name: Weather.icon; fill: true; font.pixelSize: 17; anchors.verticalCenter: parent.verticalCenter; color: parent.active ? Theme.onPrimary : Theme.onSurface }
             Label { text: Weather.temp.toFixed(1) + "°C"; font.bold: true; anchors.verticalCenter: parent.verticalCenter; color: parent.active ? Theme.onPrimary : Theme.onSurface }
         }
-        Item { Layout.fillWidth: true }
+    }
 
-        // ── right ───────────────────────────────────────────────────────────
+    // ── right ───────────────────────────────────────────────────────────────
+    RowLayout {
+        anchors { right: parent.right; top: parent.top; bottom: parent.bottom; rightMargin: 10 }
+        spacing: 8
         Tray {}
         Pill { padding: 10
             Icon { name: "keyboard"; font.pixelSize: 17; anchors.verticalCenter: parent.verticalCenter }
