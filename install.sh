@@ -29,7 +29,7 @@ link_dir() {
 }
 
 say "Linking configs into ~/.config"
-mkdir -p "$CFG/quickshell" "$CFG/rrk-shell" "$HOME/.local/bin" "$HOME/.local/state/rrk-shell"
+mkdir -p "$CFG/quickshell" "$CFG/rrk-shell" "$HOME/.local/bin" "$HOME/.local/state/rrk-shell" "$HOME/.local/share/color-schemes"
 link_dir shell  quickshell/rrk-shell
 link_dir hypr   hypr
 link_dir kitty  kitty

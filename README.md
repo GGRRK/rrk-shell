@@ -153,8 +153,14 @@ Pick a wallpaper (`SUPER+W`) and `matugen` derives a Material-You palette from i
 | `colors.lua` | `hypr/config/colors.lua` | Hyprland window borders |
 | `kitty-colors.conf` | `kitty/colors.conf` | terminal colours (running kitty windows update live) |
 | `hyprlock.conf` | `hypr/hyprlock.conf` | lock screen |
+| `gtk.css` | `~/.config/gtk-3.0/gtk.css`, `gtk-4.0/gtk.css` | GTK / libadwaita apps (accent + surfaces) |
+| `qt6ct-colors.conf` | `qt6ct/colors/rrk-dark.conf` | plain Qt apps (via qt6ct) |
+| `kdeglobals` | `~/.config/kdeglobals`, `~/.local/share/color-schemes/RRKDark.colors` | KDE apps (Dolphin) |
 
 The generated files are git-ignored; the palette is always rebuilt from the current wallpaper.
+Dark mode for everything else: `install.sh` sets `color-scheme = prefer-dark` in gsettings (served to apps — including
+Flatpaks like Zen — by `xdg-desktop-portal-gtk`), links `gtk/` and `qt6ct/` into `~/.config`, and gives Flatpak apps
+read access to the GTK config. Running apps pick the change up live (GTK/Firefox) or on next launch (Qt/KDE).
 Fonts: JetBrainsMono Nerd Font for text, Material Symbols Rounded for icons.
 
 ## Hyprland config layout
