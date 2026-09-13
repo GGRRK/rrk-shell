@@ -16,7 +16,7 @@ hl.bind(mainMod .. " + W",     hl.dsp.exec_cmd(qs_ipc .. " panels toggle wallpap
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(shell .. " wallpaper random"))
 hl.bind(mainMod .. " + B",     hl.dsp.exec_cmd(qs_ipc .. " panels toggle bluetooth"))
 hl.bind(mainMod .. " + X",     hl.dsp.exec_cmd(qs_ipc .. " panels toggle power"))
-hl.bind(mainMod .. " + V",     hl.dsp.exec_cmd("cliphist list | wofi --dmenu | cliphist decode | wl-copy"))
+hl.bind(mainMod .. " + V",     hl.dsp.exec_cmd(qs_ipc .. " panels toggle clipboard"))
 
 -- screenshots (grim + slurp): region to clipboard, full screen to ~/Pictures/Screenshots
 hl.bind("SHIFT + PRINT", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy && notify-send -a Screenshot 'Region copied to clipboard'"))

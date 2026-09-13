@@ -41,7 +41,7 @@ so editing a file here changes the live desktop (Quickshell hot-reloads QML on s
 | `SUPER + Shift + W` | Random wallpaper right now (colours re-theme everywhere) |
 | `SUPER + B` | Bluetooth panel |
 | `SUPER + X` | Power menu (lock, log out, suspend, reboot, shut down) |
-| `SUPER + V` | Clipboard history |
+| `SUPER + V` | Clipboard history — type to filter, `Enter` copies the highlighted entry, `↑ ↓` move, `✕` on a row deletes it, `Shift + Delete` deletes the highlighted one, bin button clears all (asks first) |
 | `SUPER + L` | Lock screen (hyprlock) |
 | `SUPER + M` | Log out (`uwsm stop`) |
 | `Esc` / click outside | Close any open panel |
@@ -114,7 +114,7 @@ Left to right:
 rrkshell start              start the wallpaper daemon + shell (Hyprland does this at login)
 rrkshell stop               stop the shell
 rrkshell restart            restart it (use after big QML edits; small edits hot-reload)
-rrkshell toggle <panel>     dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power
+rrkshell toggle <panel>     dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power | clipboard
 rrkshell wallpaper <image>  set a wallpaper and regenerate the colour scheme everywhere
 rrkshell wallpaper random   pick a random one from your wallpaper folder
 rrkshell log                follow the shell log (~/.local/state/rrk-shell/shell.log)
