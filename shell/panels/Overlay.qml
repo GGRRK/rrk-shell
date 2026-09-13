@@ -25,6 +25,7 @@ PanelWindow {
     Dashboard      { anchors.horizontalCenter: parent.horizontalCenter; y: win.top }
     NotifCenter    { x: parent.width - width - 8; y: win.top }
     Launcher       { anchors.horizontalCenter: parent.horizontalCenter; y: win.top + 40 }
+    ClipboardPanel { anchors.horizontalCenter: parent.horizontalCenter; y: win.top + 40 }
     WallpaperPicker{ anchors.horizontalCenter: parent.horizontalCenter; y: win.top }
     MediaPanel     { x: 8; y: win.top }
     BluetoothPanel { anchors.horizontalCenter: parent.horizontalCenter; y: win.top }
