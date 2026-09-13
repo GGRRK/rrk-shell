@@ -5,7 +5,9 @@
 #   lock-status.sh layout "<xkb layout name>"   ->  <keyboard icon>  EN      ("English (US)" -> EN, like Keyboard.qml)
 #   lock-status.sh battery                      ->  <battery icon>  87%     (from /sys/class/power_supply/BAT*)
 #   lock-status.sh weather                      ->  <weather icon>  7.7°C   (from a cache; refreshes it in the background)
-#   lock-status.sh weather-refresh              ->  internal: fetch open-meteo, write the cache, poke hyprlock (SIGUSR2)
+#   lock-status.sh weather-refresh              ->  internal, detached: fetch open-meteo and rewrite the cache
+# The weather label polls `weather` every 15 s (cheap: one cache read), so a fresh cache shows up on its own.
+# No signals are sent to hyprlock: its SIGUSR2 handler is installed late and touches mutexes from signal context.
 set -u
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/rrk-shell/lock-weather"      # one line: "<weather_code> <temperature> <is_day>"
 SETTINGS="${XDG_CONFIG_HOME:-$HOME/.config}/rrk-shell/settings.json"
@@ -65,19 +67,18 @@ case "${1:-}" in
         # long as we hold them the `weather` label command above looks unfinished. Close all fds > 2 (255 is
         # bash's own handle on this script) before doing anything slow.
         for f in /proc/$$/fd/*; do n=${f##*/}; [ "$n" -gt 2 ] && [ "$n" -ne 255 ] && eval "exec $n>&-"; done 2>/dev/null
+        mkdir -p "$(dirname "$CACHE")"
+        touch "$CACHE"                                                # claim the slot: no second refresh for 10 min
+        fail() { touch -d '-540 seconds' "$CACHE" 2>/dev/null; exit 1; }   # network down: retry in ~1 min, not every poll
         lat=$(jq -r '.weather.lat // empty' "$SETTINGS" 2>/dev/null); lon=$(jq -r '.weather.lon // empty' "$SETTINGS" 2>/dev/null)
         if [ -z "$lat" ] || [ -z "$lon" ]; then                      # same IP-based fallback as Weather.qml
-            geo=$(curl -sf --max-time 8 'https://ipwho.is/?fields=latitude,longitude') || exit 1
+            geo=$(curl -sf --max-time 8 'https://ipwho.is/?fields=latitude,longitude') || fail
             lat=$(jq -r '.latitude // empty' <<<"$geo"); lon=$(jq -r '.longitude // empty' <<<"$geo")
-            [ -n "$lat" ] && [ -n "$lon" ] || exit 1
+            [ -n "$lat" ] && [ -n "$lon" ] || fail
         fi
-        j=$(curl -sf --max-time 10 "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code,is_day") || exit 1
+        j=$(curl -sf --max-time 10 "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,weather_code,is_day") || fail
         code=$(jq -r '.current.weather_code // empty' <<<"$j"); temp=$(jq -r '.current.temperature_2m // empty' <<<"$j"); day=$(jq -r '.current.is_day // 1' <<<"$j")
-        [ -n "$code" ] && [ -n "$temp" ] || exit 1
-        mkdir -p "$(dirname "$CACHE")"
-        printf '%s %s %s\n' "$code" "$temp" "$day" > "$CACHE.tmp" && mv "$CACHE.tmp" "$CACHE"
-        # SIGUSR2 = "re-run the labels". hyprlock installs that handler ~2 s after starting (before that the
-        # signal would kill it), so only poke instances that have been running for more than 3 s.
-        pkill -O 3 -USR2 -x hyprlock 2>/dev/null || true ;;
-    *) sed -n '2,8p' "$0" >&2; exit 1 ;;
+        [ -n "$code" ] && [ -n "$temp" ] || fail
+        printf '%s %s %s\n' "$code" "$temp" "$day" > "$CACHE.tmp" && mv "$CACHE.tmp" "$CACHE" ;;
+    *) sed -n '2,10p' "$0" >&2; exit 1 ;;
 esac
