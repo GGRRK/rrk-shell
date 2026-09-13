@@ -2,4 +2,5 @@ hl.window_rule({ name = "suppress-maximize-events", match = { class = ".*" }, su
 hl.window_rule({ name = "fix-xwayland-drags", match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false }, no_focus = true })
 hl.window_rule({ name = "float-pavucontrol", match = { class = "org.pulseaudio.pavucontrol" }, float = true, size = { "(monitor_w*0.5)", "(monitor_h*0.6)" }, center = true })
 hl.window_rule({ name = "float-file-dialogs", match = { title = "^(Open|Save|Select).*" }, float = true, center = true })
+hl.window_rule({ name = "float-browser-quit-prompt", match = { class = "^app\\.zen_browser\\.zen$", title = "^Close Zen$" }, float = true, center = true })
 hl.window_rule({ name = "float-bluetoothctl", match = { class = "rrk-btctl" }, float = true, size = { "(monitor_w*0.4)", "(monitor_h*0.5)" }, center = true })
