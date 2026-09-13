@@ -33,8 +33,20 @@ mkdir -p "$CFG/quickshell" "$CFG/rrk-shell" "$HOME/.local/bin" "$HOME/.local/sta
 link_dir shell  quickshell/rrk-shell
 link_dir hypr   hypr
 link_dir kitty  kitty
+link_dir gtk/gtk-3.0 gtk-3.0
+link_dir gtk/gtk-4.0 gtk-4.0
+link_dir qt6ct  qt6ct
 ln -sf "$REPO/bin/rrkshell" "$HOME/.local/bin/rrkshell"
 # kitty's colors.conf and hypr's config/colors.lua are generated inside the repo dirs by matugen (gitignored)
+
+say "Dark mode for every toolkit (GTK via the desktop portal, Qt via qt6ct, Flatpak apps read the GTK config)"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
+gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'
+if command -v flatpak >/dev/null; then
+    flatpak override --user --filesystem=xdg-config/gtk-3.0:ro --filesystem=xdg-config/gtk-4.0:ro
+fi
 
 say "Settings"
 if [ ! -f "$CFG/rrk-shell/settings.json" ]; then

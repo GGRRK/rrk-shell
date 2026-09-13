@@ -17,3 +17,15 @@ output_path = "~/.config/kitty/colors.conf"
 [templates.hyprlock]
 input_path  = "~/claude/rrk-shell/matugen/templates/hyprlock.conf"
 output_path = "~/.config/hypr/hyprlock.conf"
+
+[templates.gtk3]
+input_path  = "~/claude/rrk-shell/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-3.0/gtk.css"
+
+[templates.gtk4]
+input_path  = "~/claude/rrk-shell/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-4.0/gtk.css"
+
+[templates.qt6ct]
+input_path  = "~/claude/rrk-shell/matugen/templates/qt6ct-colors.conf"
+output_path = "~/claude/rrk-shell/qt6ct/colors/rrk-dark.conf"
