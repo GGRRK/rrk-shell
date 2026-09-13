@@ -63,7 +63,11 @@ Item {
         return s
     }
     // called by the panel when it opens: drop last time's chips at once, rebuild (and fly in) after the debounce
-    function reset() { slots = []; order = []; linksOn = false; flyNext = true; page = dev ? "info" : "devices"; relayout.restart() }
+    function reset() {
+        slots = []; order = []; linksOn = false; flyNext = true; page = dev ? "info" : "devices"; relayout.restart()
+        // the adapter may already be scanning (reopened quickly, another client): show the arcs for this open too
+        scanArc.active = Bluetooth.discovering; if (Bluetooth.discovering) arcStop.restart()
+    }
     function apply() {
         relayout.stop(); devRelayout.stop()
         if (!radial.visible) return                      // hidden (popup closed / list mode): reset()/visible handle it later
@@ -75,7 +79,8 @@ Item {
     Timer { id: devRelayout; interval: 600; onTriggered: radial.apply() }
     Timer { id: linkShow;    interval: 380; onTriggered: radial.linksOn = true }
     onPageChanged: { flyNext = true; relayout.restart() }
-    onVisibleChanged: if (visible) { flyNext = true; relayout.restart() }
+    // back from list mode: the primary may have gone while the Connections below were disabled
+    onVisibleChanged: if (visible) { flyNext = true; if (page === "info" && !dev) page = "devices"; relayout.restart() }
     onSlotsChanged: links.requestPaint()
     // identity of the device set (names arrive after the device object, so devicesChanged alone is not enough)
     readonly property string slotKey: BtInfo.others.map(d => d.address).join(",")

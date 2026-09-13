@@ -67,7 +67,7 @@ Card {
     Icon { x: 12; anchors.verticalCenter: parent.verticalCenter; name: chip.icon; fill: chip.accent; font.pixelSize: 22
            color: chip.accent ? Theme.primary : Theme.onSurfaceVariant }
     Column {
-        x: 42; width: parent.width - 52; anchors.verticalCenter: parent.verticalCenter; spacing: 2
+        x: 42; width: parent.width - 48; anchors.verticalCenter: parent.verticalCenter; spacing: 2   // 120 px: 15-char names fit at 13 px
         Label { text: chip.title; width: parent.width; font.pixelSize: chip.titleSize; font.bold: true
                 color: chip.dim ? Theme.onSurfaceVariant : Theme.onSurface }
         Label { text: chip.subtitle; width: parent.width; font.pixelSize: 11; color: Theme.onSurfaceVariant; visible: text !== "" }
