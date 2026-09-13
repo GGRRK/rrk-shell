@@ -22,11 +22,14 @@ Popup {
     }
 
     function matches(e, q) { return (e.preview + " " + e.kind + " " + (e.format || "")).toLowerCase().includes(q) }
+    // `shown` guards: the TextField keeps keyboard focus after the panel fades out, so a Return / Shift+Delete pressed
+    // while another panel is open would otherwise copy or delete an entry invisibly.
     function activate() {
+        if (!shown) return
         const e = results[list.currentIndex]
         if (e) { Clipboard.copy(e.id, e.kind === "image" ? "image/" + e.format : ""); Panels.close() }
     }
-    function removeAt(i) { const e = results[i]; if (e) { keepIndex = i; Clipboard.remove(e.id) } }
+    function removeAt(i) { if (!shown) return; const e = results[i]; if (e) { keepIndex = i; Clipboard.remove(e.id) } }
     Connections {
         target: Clipboard
         function onEntriesChanged() { Qt.callLater(() => { list.currentIndex = Math.max(0, Math.min(root.keepIndex, root.results.length - 1)); root.keepIndex = 0 }) }
@@ -85,6 +88,7 @@ Popup {
             id: list
             Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 6
             model: root.results
+            highlightMoveDuration: 80   // also the scroll-to-current speed (default is 400 px/s: seconds for a long jump after a delete)
             delegate: Rectangle {
                 id: row
                 required property var modelData
@@ -116,7 +120,7 @@ Popup {
                         radius: Theme.radiusSm
                         color: row.kind === "color" ? row.modelData.preview : Theme.pillBg
                         border.width: row.kind === "color" ? 1 : 0; border.color: Theme.alpha(Theme.outline, 0.6)
-                        Image { id: thumb; anchors.fill: parent; anchors.margins: 3; visible: row.isImage; source: row.isImage ? "file://" + row.modelData.file : ""
+                        Image { id: thumb; anchors.fill: parent; anchors.margins: 3; visible: row.isImage; source: row.isImage && row.modelData.file ? "file://" + row.modelData.file : ""
                                 fillMode: Image.PreserveAspectFit; asynchronous: true; sourceSize: Qt.size(176, 120); cache: true }
                         Icon { anchors.centerIn: parent; visible: row.kind !== "color" && (!row.isImage || thumb.status !== Image.Ready); font.pixelSize: 20; color: Theme.primary
                                name: row.isImage ? "image" : row.kind === "url" ? "link" : row.kind === "path" ? "folder" : "notes" }

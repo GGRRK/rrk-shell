@@ -9,7 +9,7 @@ import QtQuick
 // rows that are on screen, one Process at a time, and cached in `texts` for the rest of the session.
 Singleton {
     id: root
-    property var entries: []        // [{id, kind: "text"|"url"|"path"|"color"|"image", preview, file?, format?, w?, h?, size?}]
+    property var entries: []        // [{id, kind: "text"|"url"|"path"|"color"|"image", preview, file?, format?, w?, h?, size?}] (file = thumbnail path or null)
     property var texts: ({})        // id -> snippet string; null = decode failed (rows fall back to the preview)
     property bool loading: false
     readonly property string repo: Quickshell.env("HOME") + "/claude/rrk-shell"
@@ -78,11 +78,13 @@ Singleton {
     }
 
     // ── actions ──
-    // copy: decode into a temp file and hand it to wl-copy only if there is data (never clobber the clipboard with
-    // nothing); images get an explicit MIME type so wl-copy does not have to guess (that needs xdg-utils).
+    // copy: decode into a temp file (in the private $XDG_RUNTIME_DIR) and hand it to wl-copy only if there is data
+    // (never clobber the clipboard with nothing); images get an explicit MIME type so wl-copy does not have to guess
+    // (that needs xdg-utils). wl-copy's background child inherits the open file descriptor, so unlinking the file
+    // right after is safe (the data stays readable until that descriptor is closed).
     function copy(id, mime) {
         Quickshell.execDetached(["sh", "-c",
-            "t=$(mktemp) && cliphist decode \"$1\" > \"$t\" && [ -s \"$t\" ] && { if [ -n \"$2\" ]; then wl-copy -t \"$2\" < \"$t\"; else wl-copy < \"$t\"; fi; }; rm -f -- \"$t\"",
+            "t=$(mktemp -p \"${XDG_RUNTIME_DIR:-/tmp}\") && cliphist decode \"$1\" > \"$t\" && [ -s \"$t\" ] && { if [ -n \"$2\" ]; then wl-copy -t \"$2\" < \"$t\"; else wl-copy < \"$t\"; fi; }; rm -f -- \"$t\"",
             "sh", String(id), mime || ""])
     }
     // remove: `cliphist delete` takes ids on stdin — NOT delete-query, which removes every entry containing the text

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Prints the clipboard history (cliphist) as a JSON array, newest first:
-#   [{"id":12,"kind":"image","preview":"[[ binary data 123 KiB png 800x600 ]]","size":"123 KiB","format":"png","w":800,"h":600,"file":"/home/x/.cache/rrk-shell/clip/12.png"},
+#   [{"id":12,"kind":"image","preview":"[[ binary data 123 KiB png 800x600 ]]","size":"123 KiB","format":"png","w":800,"h":600,"file":"/home/x/.cache/rrk-shell/clip/12.png"},   (file: null if no thumbnail)
 #    {"id":11,"kind":"text","preview":"#ff8800"}]
 # Image entries get a small thumbnail (<=176x120 PNG, made once with ImageMagick) in ~/.cache/rrk-shell/clip/<id>.png;
 # thumbnails of entries that no longer exist are removed. Used by shell/services/Clipboard.qml.
@@ -27,20 +27,22 @@ while IFS=$'\t' read -r id preview; do
     fi
 done <<< "$list"
 
-# 2. drop thumbnails whose entry is gone (deleted / wiped / trimmed by cliphist)
+# 2. drop thumbnails whose entry is gone (deleted / wiped / trimmed by cliphist); remember which ids have one
+have=" "
 for f in "$CACHE"/*; do
     [ -e "$f" ] || continue
     id="${f##*/}"; id="${id%%.*}"
-    grep -q "^${id}"$'\t' <<< "$list" || rm -f -- "$f"
+    if grep -q "^${id}"$'\t' <<< "$list"; then have+="$id "; else rm -f -- "$f"; fi
 done
 
-# 3. JSON (jq escapes quotes / backslashes / control characters in the previews)
-printf '%s' "$list" | jq -R -s --arg cache "$CACHE" '
+# 3. JSON (jq escapes quotes / backslashes / control characters in the previews); "file" is null when the
+#    thumbnail could not be made, so the shell shows the placeholder icon instead of logging a failed image load
+printf '%s' "$list" | jq -R -s --arg cache "$CACHE" --arg have "$have" '
   split("\n") | map(select(length > 0))
   | map(capture("^(?<id>[0-9]+)\t(?<preview>.*)$") | .id |= tonumber)
   | map(
       if (.preview | test("^\\[\\[ binary data [0-9]+ [A-Za-z]+ [a-z]+ [0-9]+x[0-9]+ \\]\\]$")) then
         (.preview | capture("^\\[\\[ binary data (?<size>[0-9]+ [A-Za-z]+) (?<format>[a-z]+) (?<w>[0-9]+)x(?<h>[0-9]+) \\]\\]$")) as $m
         | { id, kind: "image", preview, size: $m.size, format: $m.format, w: ($m.w | tonumber), h: ($m.h | tonumber),
-            file: ($cache + "/" + (.id | tostring) + ".png") }
+            file: ((.id | tostring) as $i | if ($have | contains(" " + $i + " ")) then ($cache + "/" + $i + ".png") else null end) }
       else { id, kind: "text", preview } end)'
