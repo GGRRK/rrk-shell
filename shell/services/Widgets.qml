@@ -42,7 +42,8 @@ Singleton {
 
     function apply(txt) {
         let w = {}
-        try { w = JSON.parse(txt).widgets || {} } catch (e) { console.warn("settings.json parse error", e) }
+        if (txt.trim() !== "")               // a missing / empty settings.json just means "all defaults"
+            try { w = JSON.parse(txt).widgets || {} } catch (e) { console.warn("settings.json parse error", e) }
         clock = w.clock !== false; cava = w.cava !== false; sysmon = w.sysmon !== false; weather = w.weather !== false
     }
     function show(on) { hidden = !on; stateFile.setText(hidden ? "1" : "0") }

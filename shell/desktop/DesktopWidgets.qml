@@ -26,7 +26,7 @@ PanelWindow {
         anchors { top: parent.top; left: parent.left; right: parent.right }
         spacing: 12
         ClockWidget   { width: parent.width; visible: Widgets.clock }
-        CavaWidget    { width: parent.width; visible: Widgets.cava && Cava.available && (Media.playing || Cava.recent) }
+        CavaWidget    { width: parent.width; visible: Widgets.cava && Cava.available && Media.active && (Media.playing || Cava.recent) }
         SysMonWidget  { width: parent.width; visible: Widgets.sysmon }
         WeatherWidget { width: parent.width; visible: Widgets.weather }
     }

@@ -16,8 +16,8 @@ Singleton {
     property bool available: false                 // `cava` found in PATH (probed once at startup)
     readonly property bool running: proc.running
     // the card stays for a minute after playback pauses, then folds away (a paused browser tab would
-    // otherwise keep a dead visualizer on the desktop for hours)
-    property bool recent: false
+    // otherwise keep a dead visualizer on the desktop for hours); true = playing now or within the last 60 s
+    property bool recent: Media.playing
     // add `|| Panels.open === "media"` here if a popup panel ever shows the visualizer too
     readonly property bool shouldRun: available && Media.playing && Widgets.enabled && Widgets.cava && Widgets.desktopVisible
     property int failures: 0
@@ -36,7 +36,7 @@ Singleton {
     }
     Connections {
         target: Media
-        function onPlayingChanged() { if (Media.playing) { root.recent = true; recentTimer.stop() } else recentTimer.restart() }
+        function onPlayingChanged() { root.recent = true; if (Media.playing) recentTimer.stop(); else recentTimer.restart() }
     }
     Timer { id: recentTimer;  interval: 60000; onTriggered: root.recent = Media.playing }
     Timer { id: stopDelay;    interval: 3000;  onTriggered: if (!root.shouldRun) proc.running = false }
