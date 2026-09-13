@@ -22,12 +22,12 @@ Rectangle {
                 Behavior on color { ColorAnimation { duration: 160 } }
                 Label { anchors.centerIn: parent; text: wsId; font.bold: true; font.pixelSize: 12
                         color: focused ? Theme.onPrimary : occupied ? Theme.onSurface : Theme.onSurfaceVariant }
-                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Hyprland.dispatch("workspace " + wsId) }
+                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Hyprland.dispatch("hl.dsp.focus({ workspace = " + wsId + " })") }
             }
         }
     }
     MouseArea {
         anchors.fill: parent; z: -1
-        onWheel: w => Hyprland.dispatch("workspace " + (w.angleDelta.y < 0 ? "e+1" : "e-1"))
+        onWheel: w => Hyprland.dispatch("hl.dsp.focus({ workspace = \"" + (w.angleDelta.y < 0 ? "e+1" : "e-1") + "\" })")
     }
 }

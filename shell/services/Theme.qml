@@ -29,7 +29,7 @@ Singleton {
     readonly property string wallpaper:       pick("wallpaper", "")
 
     // Panels are drawn near-black and slightly translucent so Hyprland's blur shows through.
-    readonly property color panelBg:   alpha(Qt.darker(surface, 1.25), 0.90)
+    readonly property color panelBg:   alpha(surfaceLow, 0.93)
     readonly property color panelBorder: alpha(outlineVariant, 0.55)
     readonly property color pillBg:    alpha(surfaceHigh, 0.75)
     readonly property color pillHover: alpha(surfaceHighest, 0.95)

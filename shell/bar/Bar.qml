@@ -47,7 +47,7 @@ PanelWindow {
         Pill { padding: 10
             Icon { name: "keyboard"; font.pixelSize: 17; anchors.verticalCenter: parent.verticalCenter }
             Label { text: Keyboard.layout; font.bold: true; anchors.verticalCenter: parent.verticalCenter }
-            onClicked: Hyprland.dispatch("switchxkblayout all next")
+            onClicked: Quickshell.execDetached(["hyprctl", "switchxkblayout", "all", "next"])
         }
         Pill {
             active: Panels.open === "network"; onClicked: Panels.toggle("network")

@@ -15,7 +15,7 @@ Pill {
     }
     Column {
         anchors.verticalCenter: parent.verticalCenter; spacing: -1
-        Label { text: Media.title; font.bold: true; font.pixelSize: 11; width: Math.min(implicitWidth, 150); color: parent.parent.active ? Theme.onPrimary : Theme.onSurface }
+        Label { text: Media.title; font.bold: true; font.pixelSize: 11; width: 150; elide: Text.ElideRight; color: parent.parent.active ? Theme.onPrimary : Theme.onSurface }
         Label { text: Media.fmt(Media.position) + " / " + Media.fmt(Media.length); font.pixelSize: 9; color: parent.parent.active ? Theme.onPrimary : Theme.onSurfaceVariant }
     }
     Row {

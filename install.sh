@@ -61,7 +61,7 @@ say "First colour scheme"
 first="$(find "$WALLS" -maxdepth 2 -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.webp' \) | head -n1 || true)"
 if [ -n "$first" ]; then
     printf '%s' "$first" > "$HOME/.local/state/rrk-shell/wallpaper"
-    matugen image "$first" -c "$REPO/matugen/config.toml" -m dark >/dev/null && echo "  palette generated from $(basename "$first")"
+    matugen image "$first" -c "$REPO/matugen/config.toml" -m dark --prefer saturation >/dev/null && echo "  palette generated from $(basename "$first")"
 fi
 
 say "Done"

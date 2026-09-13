@@ -15,11 +15,13 @@ while IFS= read -r -d '' f; do
     else
         # average colour of a heavily downscaled copy, then boost saturation so the hue is meaningful
         color=$(magick "$f" -resize 64x64! -modulate 100,180 -scale 1x1! -format '%[hex:u.p{0,0}]' info: 2>/dev/null | cut -c1-6)
-        [ -n "$color" ] || color="808080"
         hue=$(magick "$f" -resize 32x32! -colorspace HSL -scale 1x1! -format '%[fx:int(u.r*360)]' info: 2>/dev/null)
-        [ -n "$hue" ] || hue=0
-        color="#$color"
-        echo "$color $hue" > "$CACHE/$key"
+        if [ -n "$color" ] && [ -n "$hue" ]; then
+            color="#$color"
+            echo "$color $hue" > "$CACHE/$key"   # only cache real results (magick may be missing)
+        else
+            color="#808080"; hue=0
+        fi
     fi
     name=$(basename "$f"); name="${name%.*}"
     [ $first -eq 1 ] || echo ","

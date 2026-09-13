@@ -41,7 +41,7 @@ apply_wallpaper() { # apply_wallpaper <image> [--no-transition]
         awww img "$img" --transition-type grow --transition-pos center --transition-fps 60 --transition-duration 1.2
     fi
     printf '%s' "$img" > "$STATE/wallpaper"
-    matugen image "$img" -c "$REPO/matugen/config.toml" -m dark >/dev/null 2>&1
+    matugen image "$img" -c "$REPO/matugen/config.toml" -m dark --prefer saturation >/dev/null 2>&1
     # kitty picks up colours live; Hyprland re-reads colors.lua on reload
     hyprctl reload >/dev/null 2>&1 || true
     pkill -USR1 -x kitty 2>/dev/null || true

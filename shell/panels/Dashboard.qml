@@ -6,7 +6,7 @@ import qs.components
 Popup {
     id: root
     name: "dashboard"
-    implicitWidth: 980; implicitHeight: col.implicitHeight + 40
+    implicitWidth: 1100; implicitHeight: col.implicitHeight + 40
 
     ColumnLayout {
         id: col
@@ -51,7 +51,7 @@ Popup {
 
             // ── current weather ───────────────────────────────────────────
             ColumnLayout {
-                Layout.preferredWidth: 280; spacing: 4
+                Layout.preferredWidth: 300; Layout.minimumWidth: 300; spacing: 4
                 Row { Layout.alignment: Qt.AlignHCenter; spacing: 26
                     Icon { name: "chevron_left"; color: Theme.onSurfaceVariant }
                     Label { text: Time.weekday.toUpperCase(); font.bold: true; font.letterSpacing: 2 }
@@ -86,7 +86,7 @@ Popup {
         RowLayout {
             Layout.fillWidth: true; spacing: 18
             GridLayout {
-                columns: 3; columnSpacing: 10; rowSpacing: 10; Layout.preferredWidth: 560
+                columns: 3; columnSpacing: 10; rowSpacing: 10; Layout.preferredWidth: 620; Layout.maximumWidth: 620
                 Toggle { Layout.fillWidth: true; icon: Network.icon; title: "Wi-Fi"; subtitle: Network.label; active: Network.wifiEnabled; onClicked: Network.toggleWifi(); onRightClicked: Panels.show("network") }
                 Toggle { Layout.fillWidth: true; icon: Bluetooth.icon; title: "Bluetooth"; subtitle: Bluetooth.label; active: Bluetooth.enabled; onClicked: Bluetooth.toggle(); onRightClicked: Panels.show("bluetooth") }
                 Toggle { Layout.fillWidth: true; icon: Notifs.dnd ? "notifications_off" : "notifications"; title: "Do Not Disturb"; subtitle: Notifs.dnd ? "On" : "Off"; active: Notifs.dnd; onClicked: Notifs.dnd = !Notifs.dnd }
@@ -94,8 +94,9 @@ Popup {
                 Toggle { Layout.fillWidth: true; icon: Power.icon; title: "Power Mode"; subtitle: Power.profile; active: Power.profile === "performance"; onClicked: Power.cycle() }
                 Toggle { Layout.fillWidth: true; icon: "lock"; title: "Lock Screen"; subtitle: "hyprlock"; onClicked: { Panels.close(); Power.lock() } }
             }
+            Item { Layout.fillWidth: true }
             Row {
-                Layout.fillWidth: true; Layout.alignment: Qt.AlignRight; spacing: 8
+                Layout.alignment: Qt.AlignRight; spacing: 8
                 Repeater {
                     model: Weather.daily
                     Card { required property var modelData; width: 66; height: 122

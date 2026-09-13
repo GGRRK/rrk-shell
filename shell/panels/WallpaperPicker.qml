@@ -7,7 +7,7 @@ import qs.components
 Popup {
     id: root
     name: "wallpapers"
-    implicitWidth: 1500; implicitHeight: 420
+    implicitWidth: 1500; implicitHeight: 392
     property int hueFilter: -1           // -1 = all
     property string query: ""
     readonly property var hues: [ { c: "#ff3b30", lo: 345, hi: 15 }, { c: "#ff9500", lo: 15, hi: 45 }, { c: "#ffd60a", lo: 45, hi: 70 }, { c: "#34c759", lo: 70, hi: 170 },

@@ -14,9 +14,9 @@ hl.config({
         blur = { enabled = true, size = 8, passes = 3, vibrancy = 0.2, noise = 0.01, popups = true, ignore_opacity = true },
     },
     animations = { enabled = true },
-    dwindle = { preserve_split = true, pseudotile = true },
+    dwindle = { preserve_split = true },
     misc = { force_default_wallpaper = 0, disable_hyprland_logo = true, disable_splash_rendering = true,
-             focus_on_activate = true, vfr = true },
+             focus_on_activate = true },
 })
 
 -- blur rrk-shell's layers (panels are semi-transparent); ignore fully transparent regions of the overlay
