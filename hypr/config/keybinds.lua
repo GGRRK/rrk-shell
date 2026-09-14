@@ -14,7 +14,7 @@ hl.bind(mainMod .. " + D",         hl.dsp.exec_cmd(qs_ipc .. " panels toggle das
 hl.bind(mainMod .. " + N",         hl.dsp.exec_cmd(qs_ipc .. " panels toggle notifications"))  -- Notification centre
 hl.bind(mainMod .. " + W",         hl.dsp.exec_cmd(qs_ipc .. " panels toggle wallpapers"))     -- Wallpaper picker
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(shell .. " wallpaper random"))              -- Random wallpaper
-hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(qs_ipc .. " panels toggle bluetooth"))      -- Bluetooth
+hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(qs_ipc .. " panels toggle bluetooth"))      -- Bluetooth panel
 hl.bind(mainMod .. " + X",         hl.dsp.exec_cmd(qs_ipc .. " panels toggle power"))          -- Power menu
 hl.bind(mainMod .. " + V",         hl.dsp.exec_cmd(qs_ipc .. " panels toggle clipboard"))      -- Clipboard history
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(qs_ipc .. " widgets toggle"))               -- Hide / show desktop widgets
@@ -42,7 +42,7 @@ hl.bind(mainMod .. " + down",   hl.dsp.focus({ direction = "down" }))     -- Mov
 hl.bind("ALT + TAB",            hl.dsp.window.cycle_next())               -- Next window
 hl.bind(mainMod .. " + T",      hl.dsp.window.float({ action = "toggle" }))  -- Toggle floating
 hl.bind(mainMod .. " + RETURN", hl.dsp.window.fullscreen({ mode = 1 }))   -- Fullscreen (keeps the bar)
-hl.bind(mainMod .. " + P",      hl.dsp.window.pseudo())                   -- Pseudo-tile
+hl.bind(mainMod .. " + P",      hl.dsp.window.pseudo())                   -- Pseudo-tile (window keeps its size)
 hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))             -- Toggle split direction
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })  -- Drag window
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })  -- Resize window
@@ -54,7 +54,7 @@ for i = 1, 8 do
 end
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))            -- Next / previous workspace
 hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))            -- Next / previous workspace
-hl.bind(mainMod .. " + S",          hl.dsp.workspace.toggle_special("magic"))       -- Scratchpad
+hl.bind(mainMod .. " + S",          hl.dsp.workspace.toggle_special("magic"))       -- Show / hide the scratchpad
 hl.bind(mainMod .. " + SHIFT + S",  hl.dsp.window.move({ workspace = "special:magic" }))  -- Send window to scratchpad
 
 -- Media & hardware keys

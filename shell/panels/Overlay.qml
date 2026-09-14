@@ -31,5 +31,5 @@ PanelWindow {
     BluetoothPanel { x: parent.width - width - 8; y: win.top }
     NetworkPanel   { x: parent.width - width - 8; y: win.top }
     PowerMenu      { anchors.centerIn: parent }
-    HotkeysPanel   { anchors.centerIn: parent }
+    HotkeysPanel   { anchors.horizontalCenter: parent.horizontalCenter; y: win.top }
 }

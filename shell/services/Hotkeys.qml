@@ -8,8 +8,8 @@ import QtQuick
 //   · a comment line holding only a short title ("-- Shell panels") starts a section; comment lines that look like code
 //     or prose (contain "(", "hl.", start with another "-", or are longer than 40 characters) are ignored, and so are
 //     `--[[ block ]]` comments
-//   · the trailing `-- comment` of an hl.bind(...) line is the description (a `description = "…"` field in the options
-//     table wins over it); consecutive binds with the same description share one row (arrows: "Super + ← → ↑ ↓";
+//   · the trailing `-- comment` of an hl.bind(...) line is the description (a `description = "…"` / `desc = "…"` field
+//     in the options table wins over it); consecutive binds with the same description share one row (arrows: "Super + ← → ↑ ↓";
 //     alternatives with different prefixes: "Super + C or Alt + F4"); a bind without either shows its dispatcher
 //     instead (never merged); binds before the first section title land in a section called "Other"
 //   · the key expression is evaluated: string pieces joined with `..`, `mainMod` (and any other `name = "value"` or
@@ -18,7 +18,8 @@ import QtQuick
 //     rather than shown wrong
 //   · a call may span several lines (joined until the parentheses balance); several hl.bind on one line all count
 //   · `locked = true` in the options table marks the row as working on the lock screen
-// Not understood: Lua long-bracket strings ([[…]]), keys built by function calls, submaps (listed as global binds). Both files are watched, so saving
+// Lua long strings ([[…]], [==[…]==]) are understood. Not understood: keys built by function calls; submaps (listed as
+// global binds). Both files are watched, so saving
 // keybinds.lua updates the sheet (Hyprland reloads its binds itself). `staticSections` (keys that only work inside a
 // shell panel and are not Hyprland binds) are appended at the end.
 Singleton {
@@ -136,7 +137,7 @@ Singleton {
                 if (combo.length === 0) continue
                 const opts = args.slice(2).join(",")
                 const locked = /(^|[^\w])locked\s*=\s*true\b/.test(opts)
-                const dm = opts.match(/(^|[^\w])description\s*=\s*(["'])(.*?)\2/)
+                const dm = opts.match(/(^|[^\w])(?:description|desc)\s*=\s*(["'])(.*?)\2/)
                 const explicit = dm ? dm[3] : comment
                 const desc = explicit !== "" ? explicit : args[1].trim().replace(/^hl\.dsp\./, "")
                 if (!cur) section("Other")
@@ -165,9 +166,20 @@ Singleton {
             const ch = line[i]
             if (q) { if (ch === "\\") i++; else if (ch === q) q = null }
             else if (ch === '"' || ch === "'") q = ch
+            else if (ch === "[" && longEnd(line, i) >= 0) i = longEnd(line, i) - 1
             else if (ch === "-" && line[i + 1] === "-") return i
         }
         return -1
+    }
+    // a Lua long string starting at s[i] ("[[", "[==[" …): index just past its closing bracket (end of s if unclosed), -1 if none starts here
+    function longEnd(s, i) {
+        if (s[i] !== "[") return -1
+        let j = i + 1
+        while (s[j] === "=") j++
+        if (s[j] !== "[") return -1
+        const close = "]" + "=".repeat(j - i - 1) + "]"
+        const k = s.indexOf(close, j + 1)
+        return k < 0 ? s.length : k + close.length
     }
     // net count of ( [ { opened minus closed, outside string literals
     function parenDepth(code) {
@@ -176,6 +188,7 @@ Singleton {
             const ch = code[i]
             if (q) { if (ch === "\\") i++; else if (ch === q) q = null }
             else if (ch === '"' || ch === "'") q = ch
+            else if (ch === "[" && longEnd(code, i) >= 0) i = longEnd(code, i) - 1
             else if (ch === "(" || ch === "{" || ch === "[") d++
             else if (ch === ")" || ch === "}" || ch === "]") d--
         }
@@ -190,6 +203,7 @@ Singleton {
             const ch = s[i]
             if (q) { if (ch === "\\") i++; else if (ch === q) q = null; continue }
             if (ch === '"' || ch === "'") q = ch
+            else if (ch === "[" && longEnd(s, i) >= 0) i = longEnd(s, i) - 1
             else if (ch === "(" || ch === "{" || ch === "[") depth++
             else if (ch === ")" || ch === "}" || ch === "]") { if (depth === 0) { out.push(s.slice(start, i)); out.consumed = i + 1; return out } depth-- }
             else if (ch === "," && depth === 0) { out.push(s.slice(start, i)); start = i + 1 }
@@ -212,6 +226,11 @@ Singleton {
         for (let i = 0; i < expr.length; i++) {
             const ch = expr[i]
             if (q) { tok += ch; if (ch === "\\") { tok += expr[i + 1] || ""; i++ } else if (ch === q) q = null; continue }
+            if (ch === "[" && longEnd(expr, i) >= 0) {           // [[literal]] → its content, no escapes
+                const end = longEnd(expr, i), open = expr.indexOf("[", i + 1) + 1
+                flush(); out += expr.slice(open, Math.max(open, end - (open - i)))
+                i = end - 1; continue
+            }
             if (ch === '"' || ch === "'") { q = ch; tok += ch }
             else if (ch === "." && expr[i + 1] === ".") { flush(); i++ }
             else tok += ch
