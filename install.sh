@@ -16,7 +16,8 @@ sudo pacman -S --needed --noconfirm \
     bluez bluez-utils networkmanager power-profiles-daemon upower \
     easyeffects lsp-plugins-lv2 \
     pipewire wireplumber pipewire-pulse playerctl pavucontrol \
-    grim slurp libnotify imagemagick xdg-user-dirs qt6-imageformats qt6-5compat qt6ct wofi cava
+    grim slurp libnotify imagemagick ffmpeg xdg-user-dirs qt6-imageformats qt6-5compat qt6ct wofi cava
+# optional, AUR: mpvpaper (live/video wallpapers) — `paru -S mpvpaper`; ffmpeg above makes the poster frames.
 
 say "Enabling services (bluetooth, power profiles)"
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service >/dev/null 2>&1 || true
