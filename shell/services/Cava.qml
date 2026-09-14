@@ -5,9 +5,10 @@ import QtQuick
 
 // Audio spectrum for the desktop visualizer. Runs `cava -p scripts/cava.conf` (raw ASCII output: one line per
 // frame, 40 values 0..100 separated by ';', 20 fps) and exposes the latest frame as `bars`.
-// cava only runs while something is playing (MPRIS) AND the visualizer widget is actually on screen (enabled,
-// not hidden, no window covering the desktop); it is stopped 3 s after playback pauses and restarted when the
-// default audio output changes (cava captures the sink's monitor).
+// cava only runs while something is playing (MPRIS) AND a visualizer is actually on screen — the desktop widget
+// (enabled, not hidden, no window covering the desktop) or the ring around the art in the media panel; it is
+// stopped 3 s after playback pauses and restarted when the default audio output changes (cava captures the
+// sink's monitor).
 Singleton {
     id: root
     readonly property int count: 40
@@ -18,8 +19,8 @@ Singleton {
     // the card stays for a minute after playback pauses, then folds away (a paused browser tab would
     // otherwise keep a dead visualizer on the desktop for hours); true = playing now or within the last 60 s
     property bool recent: Media.playing
-    // add `|| Panels.open === "media"` here if a popup panel ever shows the visualizer too
-    readonly property bool shouldRun: available && Media.playing && Widgets.enabled && Widgets.cava && Widgets.desktopVisible
+    readonly property bool shouldRun: available && Media.playing
+                                      && ((Widgets.enabled && Widgets.cava && Widgets.desktopVisible) || Panels.open === "media")
     property int failures: 0
 
     // Quickshell emits no `exited` when a command cannot start at all, so a missing binary would otherwise
