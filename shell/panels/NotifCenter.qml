@@ -60,7 +60,7 @@ Popup {
             RowLayout {
                 Layout.fillWidth: true; spacing: 10
                 Repeater {
-                    model: [ { i: "lock", f: () => Power.lock() }, { i: "bedtime", f: () => Power.suspend() }, { i: "restart_alt", f: () => Power.reboot() }, { i: "power_settings_new", f: () => Power.shutdown() } ]
+                    model: [ { i: "lock", f: () => Power.lock() }, { i: "bedtime", f: () => Power.screenOff() }, { i: "restart_alt", f: () => Power.reboot() }, { i: "power_settings_new", f: () => Power.shutdown() } ]
                     IconButton { required property var modelData; Layout.fillWidth: true; size: 60; iconSize: 24; icon: modelData.i; onClicked: { Panels.close(); modelData.f() } }
                 }
             }

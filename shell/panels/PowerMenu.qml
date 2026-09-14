@@ -8,7 +8,7 @@ Popup {
     Row {
         id: row; anchors.centerIn: parent; spacing: 14
         Repeater {
-            model: [ { i: "lock", t: "Lock", f: () => Power.lock() }, { i: "logout", t: "Log out", f: () => Power.logout() }, { i: "bedtime", t: "Sleep", f: () => Power.suspend() },
+            model: [ { i: "lock", t: "Lock", f: () => Power.lock() }, { i: "logout", t: "Log out", f: () => Power.logout() }, { i: "bedtime", t: "Screen off", f: () => Power.screenOff() },
                      { i: "restart_alt", t: "Reboot", f: () => Power.reboot() }, { i: "power_settings_new", t: "Shut down", f: () => Power.shutdown() } ]
             Column { required property var modelData; spacing: 8
                 IconButton { icon: modelData.i; size: 64; iconSize: 28; anchors.horizontalCenter: parent.horizontalCenter; activeColor: Theme.error; active: modelData.i === "power_settings_new"
