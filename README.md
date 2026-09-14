@@ -163,6 +163,10 @@ qs -c rrk-shell ipc call osd brightness up|down
 - `brightness` — `"backlight"` (default, `brightnessctl`) or `"overlay"`: software dimming with a translucent black layer over the screen, for machines where the backlight cannot be driven (this laptop: nouveau + dGPU-only mode — the panel ignores the EC backlight and there is no gamma either). Darkens the picture only (the mouse cursor stays bright), no power saving; the level is remembered in `~/.local/state/rrk-shell/brightness`.
 - `launcher` — corrections for the launcher's **Apps** view: `hide` = desktop-entry ids (file name without `.desktop`) to keep out of it even though you installed the package yourself, `show` = ids to force in. `shell/scripts/user-apps.sh` prints the ids the view is built from. Picked up live.
 
+### Live (video) wallpapers
+
+Drop `.mp4` / `.webm` / `.mkv` / `.mov` files into the wallpaper folder (a subfolder such as `live/` is fine) and they show up in the picker with a ▶ badge. Picking one plays it looped on the background layer with **mpvpaper** (AUR: `paru -S mpvpaper`; without it only the poster frame is shown). A poster frame (`ffmpeg`, cached in `~/.cache/rrk-shell/wallposter/`) provides the colour palette, the lock-screen background and the still behind the video. The shell pauses the video over mpv's IPC socket whenever a window covers the desktop and resumes it when the workspace is empty — on this laptop decoding is software-only (nouveau), so the loop only runs while you can actually see it (≈ 30 % of one core then, 0 % otherwise).
+
 The media panel's equalizer keeps its own state in `~/.config/rrk-shell/eq.json` (10 band gains in dB, preset, the Saved slot, on/off, expanded). The EQ runs on easyeffects (started at login as `easyeffects --hide-window --service-mode`; needs `lsp-plugins-lv2` for the actual filter); the shell talks to it over its local socket and loads the generated preset `~/.local/share/easyeffects/output/rrk-eq.json` to put a 10-band equalizer into the output pipeline.
 
 ## Theming

@@ -4,7 +4,7 @@
 #   rrkshell stop             stop the shell
 #   rrkshell restart          restart the shell (use after editing QML)
 #   rrkshell toggle <panel>   dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power | clipboard | hotkeys
-#   rrkshell wallpaper <img>  set wallpaper, regenerate colours everywhere
+#   rrkshell wallpaper <file> set wallpaper (image, or a video = live wallpaper via mpvpaper), regenerate colours everywhere
 #   rrkshell wallpaper random
 #   rrkshell log              tail the shell log
 #   rrkshell widgets          hide / show the desktop widgets (clock, visualizer, system monitor, weather)
@@ -33,16 +33,39 @@ start_wallpaper_daemon() {
     fi
 }
 
-apply_wallpaper() { # apply_wallpaper <image> [--no-transition]
-    local img="$1" trans="${2:-}"
-    [ -f "$img" ] || { echo "no such image: $img" >&2; return 1; }
+is_video() { case "${1,,}" in *.mp4|*.webm|*.mkv|*.mov) return 0 ;; *) return 1 ;; esac; }
+MPV_SOCK="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/rrk-mpvpaper.sock"
+
+# Live wallpaper = mpvpaper (AUR) looping the video on the background layer above awww's still (the poster frame).
+# Software decoding (nouveau has no video decode), silent, cheap scaler. The shell pauses it over its IPC socket
+# whenever a window covers the desktop (Wallpapers.qml), so it only really plays while the desktop is visible.
+start_video_wallpaper() { # start_video_wallpaper <video>
+    pgrep -af '^mpvpaper ' | grep -qF -- "$1" && return 0     # already playing this file (e.g. shell restart): keep it
+    stop_video_wallpaper
+    command -v mpvpaper >/dev/null || { echo "mpvpaper is not installed (paru -S mpvpaper) — showing the poster frame only" >&2; return 1; }
+    mpvpaper -f -o "no-audio loop hwdec=no profile=fast input-ipc-server=$MPV_SOCK" '*' "$1" >/dev/null 2>&1
+}
+stop_video_wallpaper() { pkill -x mpvpaper 2>/dev/null || true; rm -f "$MPV_SOCK"; }
+
+apply_wallpaper() { # apply_wallpaper <image|video> [--no-transition]
+    local file="$1" img trans="${2:-}"
+    [ -f "$file" ] || { echo "no such file: $file" >&2; return 1; }
+    if is_video "$file"; then
+        img="$("$REPO/shell/scripts/wallpaper-poster.sh" "$file")" || { echo "cannot extract a frame from $file (ffmpeg?)" >&2; return 1; }
+    else
+        img="$file"; stop_video_wallpaper
+    fi
     start_wallpaper_daemon
     if [ "$trans" = "--no-transition" ]; then
         awww img "$img" --transition-type none
     else
         awww img "$img" --transition-type grow --transition-pos center --transition-fps 60 --transition-duration 1.2
     fi
-    printf '%s' "$img" > "$STATE/wallpaper"
+    printf '%s' "$file" > "$STATE/wallpaper"
+    if is_video "$file"; then
+        [ "$trans" = "--no-transition" ] || sleep 1.2      # let the grow transition land on the poster first
+        start_video_wallpaper "$file"
+    fi
     matugen image "$img" -c "$REPO/matugen/config.toml" -m dark --prefer saturation >/dev/null 2>&1
     # kitty picks up colours live; Hyprland re-reads colors.lua on reload
     hyprctl reload >/dev/null 2>&1 || true
@@ -52,7 +75,7 @@ apply_wallpaper() { # apply_wallpaper <image> [--no-transition]
 
 random_wallpaper() {
     local dir; dir="$(wallpaper_dir)"
-    find "$dir" -maxdepth 2 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | shuf -n1
+    find "$dir" -maxdepth 2 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mkv' -o -iname '*.mov' \) | shuf -n1
 }
 
 cmd_start() {
@@ -66,7 +89,7 @@ cmd_start() {
     fi
 }
 
-cmd_stop()    { pkill -f "qs -c $QS_CONFIG" 2>/dev/null || true; }
+cmd_stop()    { pkill -f "qs -c $QS_CONFIG" 2>/dev/null || true; }   # mpvpaper keeps running: it belongs to the wallpaper, not the shell
 cmd_restart() { cmd_stop; sleep 0.3; : > "$LOG"; cmd_start; }
 cmd_toggle()  { qs -c "$QS_CONFIG" ipc call panels toggle "$1"; }
 

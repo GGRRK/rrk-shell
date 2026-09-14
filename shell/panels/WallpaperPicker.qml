@@ -82,7 +82,10 @@ Popup {
                     transform: Matrix4x4 { matrix: Qt.matrix4x4(1, -0.22, 0, 30,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1) }
                     scale: cm.containsMouse ? 1.05 : 1
                     Behavior on scale { NumberAnimation { duration: 150 } }
-                    Image { anchors.fill: parent; source: "file://" + modelData.path; fillMode: Image.PreserveAspectCrop; asynchronous: true; sourceSize: Qt.size(400, 400); cache: true }
+                    Image { anchors.fill: parent; source: "file://" + (modelData.poster || modelData.path); fillMode: Image.PreserveAspectCrop; asynchronous: true; sourceSize: Qt.size(400, 400); cache: true }
+                    // live (video) wallpaper badge
+                    Rectangle { visible: !!modelData.poster; anchors { top: parent.top; right: parent.right; margins: 10 } width: 28; height: 28; radius: 14; color: "#99000000"
+                                Icon { anchors.centerIn: parent; name: "play_arrow"; fill: true; font.pixelSize: 18; color: "white" } }
                     Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 44; gradient: Gradient { GradientStop { position: 0; color: "transparent" } GradientStop { position: 1; color: "#cc000000" } } }
                     Label { anchors { left: parent.left; leftMargin: 40; bottom: parent.bottom; bottomMargin: 10 } text: modelData.name; font.pixelSize: 11; color: "white"; width: parent.width - 60 }
                     MouseArea { id: cm; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Wallpapers.set(modelData.path) }
