@@ -34,6 +34,8 @@ ShellRoot {
     }
     // `qs -c rrk-shell ipc call widgets toggle` — hide / show the desktop widgets (SUPER+SHIFT+D, `rrkshell widgets`)
     IpcHandler { target: "widgets"; function toggle(): void { Widgets.toggle() } function show(on: bool): void { Widgets.show(on) } }
+    // `qs -c rrk-shell ipc call eq preset Rock` / `eq toggle` — equalizer presets (Flat … Classic, Saved) and ON/OFF, for keybinds and tests
+    IpcHandler { target: "eq"; function preset(name: string): void { Equalizer.applyPreset(name) } function toggle(): void { Equalizer.setEnabled(!Equalizer.enabled) } }
     // force singletons that do background work to instantiate at startup
     Component.onCompleted: { Weather.ready; Network.connected; Notifs.count; Keyboard.layout; Power.profile; Wallpapers.list }
 }

@@ -66,6 +66,7 @@ Singleton {
     function allDirty() { const d = {}; for (let i = 0; i < 10; i++) d[i] = true; return d }
 
     // ── actions (used by the panel) ──
+    signal presetApplying()            // fired BEFORE `bands` changes: the panel snapshots the old knobs for its sweep animation
     function setBand(i, db) {
         db = clamp(db); if (bands[i] === db) return
         const b = bands.slice(); b[i] = db; bands = b
@@ -75,6 +76,7 @@ Singleton {
     }
     function applyPreset(name) {
         const g = name === "Saved" ? saved : presets[name]; if (!g) return
+        presetApplying()
         bands = g.slice(); preset = name; dirty = allDirty()
         pushTimer.restart(); saveTimer.restart()
     }
