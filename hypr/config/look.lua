@@ -17,7 +17,7 @@ hl.config({
     dwindle = { preserve_split = true },
     misc = { force_default_wallpaper = 0, disable_hyprland_logo = true, disable_splash_rendering = true,
              focus_on_activate = true,
-             -- screen turned off by DPMS (lock-screen moon, idle timeout) comes back on any input
+             -- if the screen is ever DPMS-off (external tools), any input turns it back on
              key_press_enables_dpms = true, mouse_move_enables_dpms = true },
 })
 

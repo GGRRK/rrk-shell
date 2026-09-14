@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# screen-off.sh — turn the panel off without suspending (lock-screen moon button).
-# Suspend on nouveau left the screen black on 2026-09-13; DPMS off is the safe alternative.
-# Any key press / mouse move turns it back on (misc.key_press_enables_dpms / mouse_move_enables_dpms in look.lua).
-exec hyprctl dispatch 'hl.dsp.dpms("off")'
+# screen-off.sh — darken the panel without suspending (lock-screen moon button, idle timeout).
+# Uses the BACKLIGHT only, on purpose: a real DPMS-off lets nouveau runtime-suspend the RTX 3080 Ti, and its
+# GSP firmware fails to come back (-110, 2026-09-13 + 2026-09-14) -> black screen until reboot. Backlight 0 keeps
+# the GPU awake. Wake it with the brightness keys (bound with locked=true) or `brightnessctl -r`.
+brightnessctl -q -s set 0
