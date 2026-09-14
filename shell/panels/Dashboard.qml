@@ -1,12 +1,16 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Shapes
 import qs.services
 import qs.components
 
+// Dashboard: calendar · clock inside a radial 24 h forecast (8 three-hour pills on a dashed ellipse, the current
+// slot at the top and time running clockwise, like the reference) · current weather with stat rings; below:
+// quick toggles + 5-day forecast.
 Popup {
     id: root
     name: "dashboard"
-    implicitWidth: 1100; implicitHeight: col.implicitHeight + 40
+    implicitWidth: 1200; implicitHeight: col.implicitHeight + 40
 
     ColumnLayout {
         id: col
@@ -19,39 +23,53 @@ Popup {
 
             // ── calendar ──────────────────────────────────────────────────
             Card {
-                Layout.preferredWidth: 300; Layout.preferredHeight: 330
+                Layout.preferredWidth: 270; Layout.preferredHeight: 330
                 Calendar { anchors.fill: parent; anchors.margins: 14 }
             }
 
-            // ── clock + hourly forecast ───────────────────────────────────
-            ColumnLayout {
-                Layout.fillWidth: true; Layout.alignment: Qt.AlignVCenter; spacing: 6
-                Row {
-                    Layout.alignment: Qt.AlignHCenter; spacing: 4
-                    Label { text: Time.time; font.pixelSize: 78; font.bold: true; font.letterSpacing: -2 }
-                    Label { text: Time.seconds; font.pixelSize: 30; font.bold: true; color: Theme.primary; anchors.bottom: parent.bottom; anchors.bottomMargin: 14 }
+            // ── clock inside the radial forecast ──────────────────────────
+            Item {
+                id: ring
+                Layout.fillWidth: true; Layout.preferredHeight: 330
+                readonly property real cx: width / 2
+                readonly property real cy: height / 2
+                readonly property real rx: Math.min(250, width / 2 - 30)     // pill centres sit on this ellipse
+                readonly property real ry: 118
+                Shape {
+                    anchors.fill: parent
+                    ShapePath { strokeColor: Theme.alpha(Theme.outline, 0.55); strokeWidth: 1; fillColor: "transparent"
+                                strokeStyle: ShapePath.DashLine; dashPattern: [3, 5]
+                                PathAngleArc { centerX: ring.cx; centerY: ring.cy; radiusX: ring.rx; radiusY: ring.ry; startAngle: 0; sweepAngle: 360 } }
                 }
-                Label { text: Time.dateLong; Layout.alignment: Qt.AlignHCenter; font.pixelSize: 15; color: Theme.onSurfaceVariant }
-                Item { height: 12 }
-                Row {
-                    Layout.alignment: Qt.AlignHCenter; spacing: 8
-                    Repeater {
-                        model: Weather.hourly.slice(0, 6)
-                        Card {
-                            required property var modelData
-                            width: 58; height: 78
-                            Column { anchors.centerIn: parent; spacing: 3
-                                Label { text: modelData.time; font.pixelSize: 10; color: Theme.onSurfaceVariant; anchors.horizontalCenter: parent.horizontalCenter }
-                                Icon { name: Weather.iconFor(modelData.code, true); fill: true; font.pixelSize: 18; anchors.horizontalCenter: parent.horizontalCenter }
-                                Label { text: modelData.temp.toFixed(1) + "°"; font.bold: true; font.pixelSize: 12; anchors.horizontalCenter: parent.horizontalCenter } }
-                        }
+                Column {
+                    anchors.centerIn: parent; spacing: 2
+                    Row {
+                        anchors.horizontalCenter: parent.horizontalCenter; spacing: 4
+                        Label { text: Time.time; font.pixelSize: 78; font.bold: true; font.letterSpacing: -2 }
+                        Label { text: Time.seconds; font.pixelSize: 30; font.bold: true; color: Theme.primary; anchors.bottom: parent.bottom; anchors.bottomMargin: 14 }
+                    }
+                    Label { text: Time.dateLong; anchors.horizontalCenter: parent.horizontalCenter; font.pixelSize: 15; color: Theme.onSurfaceVariant }
+                }
+                Repeater {
+                    model: Weather.hourly.slice(0, 8)
+                    Card {
+                        required property var modelData
+                        required property int index
+                        readonly property real a: -Math.PI / 2 + index * Math.PI / 4       // slot 0 (now) at the top, clockwise
+                        x: ring.cx + ring.rx * Math.cos(a) - width / 2
+                        y: ring.cy + ring.ry * Math.sin(a) - height / 2
+                        width: 56; height: 72
+                        Column { anchors.centerIn: parent; spacing: 2
+                            Label { text: modelData.time; font.pixelSize: 10; color: Theme.onSurfaceVariant; anchors.horizontalCenter: parent.horizontalCenter }
+                            Icon { name: Weather.iconFor(modelData.code, true); fill: true; font.pixelSize: 17; anchors.horizontalCenter: parent.horizontalCenter }
+                            Label { text: modelData.temp.toFixed(1) + "°"; font.bold: true; font.pixelSize: 11; anchors.horizontalCenter: parent.horizontalCenter } }
                     }
                 }
             }
 
             // ── current weather ───────────────────────────────────────────
             ColumnLayout {
-                Layout.preferredWidth: 300; Layout.minimumWidth: 300; spacing: 4
+                Layout.preferredWidth: 270; Layout.minimumWidth: 270; spacing: 4
                 Row { Layout.alignment: Qt.AlignHCenter; spacing: 26
                     Icon { name: "chevron_left"; color: Theme.onSurfaceVariant }
                     Label { text: Time.weekday.toUpperCase(); font.bold: true; font.letterSpacing: 2 }
