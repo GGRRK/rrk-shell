@@ -15,6 +15,7 @@ ShellRoot {
             Overlay     { screen: modelData }
             NotifPopups { screen: modelData }
             OsdWindow   { screen: modelData }
+            DimLayer    { screen: modelData }
             DesktopWidgets { screen: modelData }
         }
     }

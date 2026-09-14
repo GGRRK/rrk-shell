@@ -23,6 +23,8 @@ hl.config({
 
 -- blur rrk-shell's layers (panels are semi-transparent); ignore fully transparent regions of the overlay
 hl.layer_rule({ match = { namespace = "rrk-.*" }, blur = true, ignore_alpha = 0.2 })
+-- the software-brightness overlay (panels/DimLayer.qml): plain translucent black, must never be blurred or animated
+hl.layer_rule({ match = { namespace = "rrkdim" }, blur = false, no_anim = true })
 
 hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1}, {0.32, 1} } })
 hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1} } })
