@@ -59,15 +59,21 @@ Popup {
             model: root.items
             leftMargin: 40; rightMargin: 40
             flickDeceleration: 4000; maximumFlickVelocity: 6000
-            // Mouse wheel / two-finger vertical scroll moves the strip sideways: a horizontal Flickable only
-            // reacts to horizontal wheel deltas, so a plain mouse wheel did nothing here. One notch = half a card.
-            WheelHandler {
-                orientation: Qt.Vertical
-                target: null
-                onWheel: ev => {
+            // Mouse wheel / two-finger scroll moves the strip sideways: a horizontal Flickable only reacts to
+            // horizontal wheel deltas, so a plain mouse wheel did nothing here. A click-transparent MouseArea on
+            // top of the cards (acceptedButtons: NoButton = presses/drags fall through to the cards and the
+            // Flickable) is the same pattern as the bar's volume/workspace wheels, which work on every device
+            // here — the WheelHandler used before did not fire with a real mouse. One notch = half a card.
+            MouseArea {
+                anchors.fill: parent; z: 2
+                acceptedButtons: Qt.NoButton
+                onWheel: w => {
+                    let d = w.angleDelta.y !== 0 ? w.angleDelta.y : w.angleDelta.x          // wheel / two-finger vertical, else horizontal
+                    if (d === 0) d = (w.pixelDelta.y || w.pixelDelta.x) * 8                   // pixel-only touchpads
                     const min = strip.originX - strip.leftMargin
                     const max = Math.max(min, strip.originX + strip.contentWidth + strip.rightMargin - strip.width)
-                    strip.contentX = Math.max(min, Math.min(max, strip.contentX - ev.angleDelta.y * 1.125))
+                    strip.contentX = Math.max(min, Math.min(max, strip.contentX - d * 1.125))
+                    w.accepted = true
                 }
             }
             delegate: Item {
