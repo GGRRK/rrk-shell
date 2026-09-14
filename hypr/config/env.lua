@@ -9,3 +9,7 @@ hl.env("MOZ_ENABLE_WAYLAND", "1")
 -- Turning off WebKit's DMA-BUF renderer avoids that path; the app still renders on the GPU. Same fix the Hyprland wiki
 -- recommends for NVIDIA. Remove once WebKitGTK / Hyprland sort out explicit sync.
 hl.env("WEBKIT_DISABLE_DMABUF_RENDERER", "1")
+-- NVIDIA driver (nvidia-open, 2026-09-14): VA-API through NVDEC and NVIDIA's GLX for Xwayland apps. The same two lines
+-- live in ~/.config/uwsm/env for the whole session (systemd user services, D-Bus-started apps); these reach what Hyprland starts.
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
