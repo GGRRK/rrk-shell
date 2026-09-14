@@ -172,10 +172,10 @@ Fonts: JetBrainsMono Nerd Font for text, Material Symbols Rounded for icons.
 
 Lock screen (`SUPER+L`, or after 10 min idle): blurred wallpaper, clock, your avatar (`~/.face` if it exists — any size, it is
 centre-cropped — otherwise a monogram in the palette colours), the password pill, and keyboard-layout / battery / weather
-pills; the moon button bottom-right suspends. Template `matugen/templates/hyprlock.conf`, helpers `shell/scripts/lock-status.sh`
+pills; the moon button bottom-right turns the screen off (DPMS; any key/mouse wakes it — suspend on nouveau left the panel black). Template `matugen/templates/hyprlock.conf`, helpers `shell/scripts/lock-status.sh`
 and `lock-avatar.sh`; re-rendered on every wallpaper change. Deliberate differences from the reference: the clock stays visible
-above the avatar row (hyprlock cannot swap views), the prompt says ENTER PASSWORD, and the button suspends instead of powering
-off (change `bedtime` + `systemctl suspend` to `power_settings_new` + `systemctl poweroff` in the template if you want that).
+above the avatar row (hyprlock cannot swap views), the prompt says ENTER PASSWORD, and the button turns the screen off instead of
+powering off (change `bedtime` + `screen-off.sh` to `power_settings_new` + `systemctl poweroff` in the template if you want that).
 
 ## Hyprland config layout
 
