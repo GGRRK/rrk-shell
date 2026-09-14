@@ -54,7 +54,8 @@ if [ ! -f "$CFG/rrk-shell/settings.json" ]; then
     cat > "$CFG/rrk-shell/settings.json" <<JSON
 {
   "wallpaperDir": "~/Pictures/Wallpapers",
-  "weather": {}
+  "weather": {},
+  "launcher": { "hide": [], "show": [] }
 }
 JSON
     echo "  wrote $CFG/rrk-shell/settings.json (edit to set a fixed weather location: {\"lat\":..,\"lon\":..,\"city\":\"..\"})"
