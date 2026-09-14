@@ -152,13 +152,15 @@ qs -c rrk-shell ipc call osd brightness up|down
   "wallpaperDir": "~/Pictures/Wallpapers",
   "weather": { "lat": 52.52, "lon": 13.40, "city": "Berlin" },
   "widgets": { "clock": true, "cava": true, "sysmon": true, "weather": true },
-  "launcher": { "hide": ["qt6ct", "uuctl"], "show": [] }
+  "launcher": { "hide": ["qt6ct", "uuctl"], "show": [] },
+  "brightness": { "mode": "backlight" }
 }
 ```
 
 - `wallpaperDir` — where the wallpaper picker looks (subfolders one level deep are included).
 - `weather` — leave `{}` to locate automatically by IP, or set a fixed place.
 - `widgets` — switch single desktop widgets off (all on by default; the key may be left out entirely). `SUPER + Shift + D` hides / shows them all.
+- `brightness` — `"backlight"` (default, `brightnessctl`) or `"shader"`: software dimming through a Hyprland screen shader for machines where the backlight cannot be driven (this laptop: nouveau + dGPU-only mode — the panel ignores the EC backlight and there is no gamma either). Darkens the picture only, no power saving; the level is remembered in `~/.local/state/rrk-shell/brightness`.
 - `launcher` — corrections for the launcher's **Apps** view: `hide` = desktop-entry ids (file name without `.desktop`) to keep out of it even though you installed the package yourself, `show` = ids to force in. `shell/scripts/user-apps.sh` prints the ids the view is built from. Picked up live.
 
 The media panel's equalizer keeps its own state in `~/.config/rrk-shell/eq.json` (10 band gains in dB, preset, the Saved slot, on/off, expanded). The EQ runs on easyeffects (started at login as `easyeffects --hide-window --service-mode`; needs `lsp-plugins-lv2` for the actual filter); the shell talks to it over its local socket and loads the generated preset `~/.local/share/easyeffects/output/rrk-eq.json` to put a 10-band equalizer into the output pipeline.
