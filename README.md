@@ -29,43 +29,55 @@ so editing a file here changes the live desktop (Quickshell hot-reloads QML on s
 
 ## Keyboard shortcuts
 
-`SUPER` is the Windows key.
+`SUPER` is the Windows key. **`SUPER + K` shows this list on screen** (with a search box) — it is generated live
+from `hypr/config/keybinds.lua`, so the sheet is always right even if this README lags behind.
 
 ### Shell panels
 | Key | Action |
 |---|---|
-| `SUPER + Space` (or `SUPER + R`) | App launcher — type to filter, `Enter` launches, `↑ ↓` move. Start with `>` to run a shell command (`>kitty -e htop`) |
-| `SUPER + D` | Dashboard — clock, calendar, weather, quick toggles (Wi-Fi, Bluetooth, DND, wallpapers, power mode, lock) |
-| `SUPER + N` | Notification center (do-not-disturb, clear all, quick actions) |
+| `SUPER + K` | Keyboard cheat sheet — every shortcut below, type to search |
+| `SUPER + Space` (or `SUPER + R`) | App launcher — type to filter, `Enter` launches, `↑ ↓` move. Opens on **Apps** (programs you installed: explicit `pacman` packages, Flatpaks, your own `.desktop` files); the **All** button or `Tab` shows every menu entry, dependencies' helper tools included. Start with `>` to run a shell command (`>kitty -e htop`) |
+| `SUPER + D` | Dashboard — clock, calendar, weather, quick tiles (Wi-Fi, Bluetooth, DND, wallpapers, power mode, lock, shortcuts, clipboard, media) |
+| `SUPER + N` | Notification centre (do-not-disturb, clear all, quick actions) |
 | `SUPER + W` | Wallpaper picker (carousel, colour filter, shuffle, auto-rotate) |
 | `SUPER + Shift + W` | Random wallpaper right now (colours re-theme everywhere) |
 | `SUPER + B` | Bluetooth panel — radial view: the connected device in the centre with Scan / Battery / Audio profile / Disconnect / MAC chips around it; the Scan chip shows nearby devices to pair or connect; top-right button switches to a plain list |
-| `SUPER + X` | Power menu (lock, log out, suspend, reboot, shut down) |
+| `SUPER + X` | Power menu (lock, log out, screen off, reboot, shut down). "Screen off" locks and darkens the backlight — a brightness key brings it back. There is deliberately no sleep/suspend: on this laptop's nouveau driver the GPU does not wake up from it |
 | `SUPER + V` | Clipboard history — type to filter, `Enter` copies the highlighted entry, `↑ ↓` move, `✕` on a row deletes it, `Shift + Delete` deletes the highlighted one, bin button clears all (asks first) |
-| `SUPER + L` | Lock screen (hyprlock) |
-| `SUPER + M` | Log out (`uwsm stop`) |
-| `Esc` / click outside | Close any open panel |
 | `SUPER + Shift + D` | Hide / show the desktop widgets (clock, visualizer, system monitor, weather) |
+| `Esc` / click outside | Close any open panel |
+
+### Screenshots
+| Key | Action |
+|---|---|
+| `Print` | Whole screen → `~/Pictures/Screenshots/<date>.png` |
+| `Shift + Print` | Select a region → clipboard |
 
 ### Apps
 | Key | Action |
 |---|---|
 | `SUPER + Q` | Terminal (kitty) |
-| `SUPER + E` | File manager (dolphin) |
+| `SUPER + E` | File manager (Dolphin) |
 | `SUPER + F` | Browser (Zen) |
 | `SUPER + C` or `Alt + F4` | Close window |
+
+### Session
+| Key | Action |
+|---|---|
+| `SUPER + L` | Lock screen (hyprlock) |
+| `SUPER + M` | Log out (`uwsm stop`) |
 
 ### Windows
 | Key | Action |
 |---|---|
 | `SUPER + ← → ↑ ↓` | Move focus between windows |
-| `Alt + Tab` | Cycle to the next window |
+| `Alt + Tab` | Next window |
 | `SUPER + T` | Toggle floating |
-| `SUPER + Enter` | Toggle fullscreen (keeps the bar) |
+| `SUPER + Enter` | Fullscreen (keeps the bar) |
 | `SUPER + P` | Pseudo-tile |
 | `SUPER + J` | Toggle split direction |
-| `SUPER + left-drag` | Move a window with the mouse |
-| `SUPER + right-drag` | Resize a window with the mouse |
+| `SUPER + left-drag` | Drag a window |
+| `SUPER + right-drag` | Resize a window |
 
 ### Workspaces
 | Key | Action |
@@ -77,15 +89,15 @@ so editing a file here changes the live desktop (Quickshell hot-reloads QML on s
 | `SUPER + Shift + S` | Send the focused window to the scratchpad |
 | 3-finger swipe | Switch workspace (touchpad) |
 
-### Screenshots
-| Key | Action |
-|---|---|
-| `Print` | Whole screen → `~/Pictures/Screenshots/<date>.png` |
-| `Shift + Print` | Select a region → clipboard |
+### Media & hardware keys
+Volume, mute, mic-mute and brightness keys show the on-screen display; the `Fn` media keys (play/pause, next,
+previous) control whatever is playing (MPRIS via playerctl). All of them also work on the lock screen.
 
-### Hardware keys
-Volume, mute, mic-mute and brightness keys work everywhere (including on the lock screen) and show the
-on-screen display. `Fn` media keys (play/pause, next, previous) control whatever is playing (MPRIS via playerctl).
+### Editing the shortcuts
+Everything above lives in `hypr/config/keybinds.lua` (Hyprland's Lua config). Hyprland reloads it on save, and the
+`SUPER + K` sheet is parsed from the same file: a comment line holding a short title (`-- Apps`) starts a section,
+the `-- comment` at the end of a bind line is the text shown next to the keys, binds with the same text share a row,
+and `for i = 1, 8 do … end` loops are listed once as `1–8`. Commented-out binds and long prose comments are ignored.
 
 ## The bar
 
@@ -115,7 +127,7 @@ Left to right:
 rrkshell start              start the wallpaper daemon + shell (Hyprland does this at login)
 rrkshell stop               stop the shell
 rrkshell restart            restart it (use after big QML edits; small edits hot-reload)
-rrkshell toggle <panel>     dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power | clipboard
+rrkshell toggle <panel>     dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power | clipboard | hotkeys
 rrkshell wallpaper <image>  set a wallpaper and regenerate the colour scheme everywhere
 rrkshell wallpaper random   pick a random one from your wallpaper folder
 rrkshell log                follow the shell log (~/.local/state/rrk-shell/shell.log)
@@ -139,13 +151,15 @@ qs -c rrk-shell ipc call osd brightness up|down
 {
   "wallpaperDir": "~/Pictures/Wallpapers",
   "weather": { "lat": 52.52, "lon": 13.40, "city": "Berlin" },
-  "widgets": { "clock": true, "cava": true, "sysmon": true, "weather": true }
+  "widgets": { "clock": true, "cava": true, "sysmon": true, "weather": true },
+  "launcher": { "hide": ["qt6ct", "uuctl"], "show": [] }
 }
 ```
 
 - `wallpaperDir` — where the wallpaper picker looks (subfolders one level deep are included).
 - `weather` — leave `{}` to locate automatically by IP, or set a fixed place.
 - `widgets` — switch single desktop widgets off (all on by default; the key may be left out entirely). `SUPER + Shift + D` hides / shows them all.
+- `launcher` — corrections for the launcher's **Apps** view: `hide` = desktop-entry ids (file name without `.desktop`) to keep out of it even though you installed the package yourself, `show` = ids to force in. `shell/scripts/user-apps.sh` prints the ids the view is built from. Picked up live.
 
 The media panel's equalizer keeps its own state in `~/.config/rrk-shell/eq.json` (10 band gains in dB, preset, the Saved slot, on/off, expanded). The EQ runs on easyeffects (started at login as `easyeffects --hide-window --service-mode`; needs `lsp-plugins-lv2` for the actual filter); the shell talks to it over its local socket and loads the generated preset `~/.local/share/easyeffects/output/rrk-eq.json` to put a 10-band equalizer into the output pipeline.
 

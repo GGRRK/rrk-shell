@@ -3,7 +3,7 @@
 #   rrkshell start            start wallpaper daemon + shell (idempotent)
 #   rrkshell stop             stop the shell
 #   rrkshell restart          restart the shell (use after editing QML)
-#   rrkshell toggle <panel>   dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power | clipboard
+#   rrkshell toggle <panel>   dashboard | notifications | launcher | wallpapers | media | bluetooth | network | power | clipboard | hotkeys
 #   rrkshell wallpaper <img>  set wallpaper, regenerate colours everywhere
 #   rrkshell wallpaper random
 #   rrkshell log              tail the shell log

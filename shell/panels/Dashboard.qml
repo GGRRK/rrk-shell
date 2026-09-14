@@ -93,6 +93,9 @@ Popup {
                 Toggle { Layout.fillWidth: true; icon: "wallpaper"; title: "Wallpapers"; subtitle: "Pick or shuffle"; onClicked: Panels.show("wallpapers"); onRightClicked: Wallpapers.random() }
                 Toggle { Layout.fillWidth: true; icon: Power.icon; title: "Power Mode"; subtitle: Power.profile; active: Power.profile === "performance"; onClicked: Power.cycle() }
                 Toggle { Layout.fillWidth: true; icon: "lock"; title: "Lock Screen"; subtitle: "hyprlock"; onClicked: { Panels.close(); Power.lock() } }
+                Toggle { Layout.fillWidth: true; icon: "keyboard"; title: "Shortcuts"; subtitle: "Super + K"; onClicked: Panels.show("hotkeys") }
+                Toggle { Layout.fillWidth: true; icon: "content_paste"; title: "Clipboard"; subtitle: "History"; onClicked: Panels.show("clipboard") }
+                Toggle { Layout.fillWidth: true; icon: "graphic_eq"; title: "Media"; subtitle: Media.active ? Media.title : "Player & equalizer"; onClicked: Panels.show("media") }
             }
             Item { Layout.fillWidth: true }
             Row {
